@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🧮 24点计算</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+    .back-btn {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      padding: 10px 20px;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 10px;
+      color: #fff;
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: all 0.3s;
+      z-index: 100;
+    }
+    .back-btn:hover { background: rgba(255,255,255,0.2); }
+    .container {
+      max-width: 600px;
+      width: 100%;
+      text-align: center;
+      margin-top: 60px;
+    }
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+      background: linear-gradient(135deg, #74b9ff, #0984e3);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .subtitle { color: rgba(255,255,255,0.6); margin-bottom: 30px; }
+    
+    .stats-bar {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin-bottom: 30px;
+    }
+    .stat {
+      background: rgba(255,255,255,0.05);
+      border-radius: 15px;
+      padding: 15px 25px;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .stat-value { font-size: 1.5rem; font-weight: 700; color: #74b9ff; }
+    .stat-label { font-size: 0.8rem; color: rgba(255,255,255,0.5); margin-top: 3px; }
+    
+    .cards-area {
+      background: rgba(255,255,255,0.05);
+      border-radius: 20px;
+      padding: 30px;
+      margin-bottom: 20px;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .cards-display {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+    .number-card {
+      width: 80px;
+      height: 100px;
+      background: linear-gradient(135deg, #74b9ff, #0984e3);
+      border-radius: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+      font-weight: 700;
+      box-shadow: 0 5px 20px rgba(116, 185, 255, 0.3);
+    }
+    .number-card.used {
+      background: rgba(255,255,255,0.1);
+      color: rgba(255,255,255,0.3);
+      box-shadow: none;
+    }
+    
+    .target {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #ffeaa7;
+      margin-bottom: 10px;
+    }
+    .hint { color: rgba(255,255,255,0.5); font-size: 0.9rem; }
+    
+    .expression-area {
+      background: rgba(255,255,255,0.05);
+      border-radius: 15px;
+      padding: 20px;
+      margin-bottom: 20px;
+      border: 1px solid rgba(255,255,255,0.1);
+      min-height: 80px;
+    }
+    .expression {
+      font-size: 1.5rem;
+      font-weight: 500;
+      color: #4ecdc4;
+      margin-bottom: 10px;
+      min-height: 40px;
+    }
+    .expression-input {
+      width: 100%;
+      padding: 12px;
+      font-size: 1.2rem;
+      background: rgba(255,255,255,0.1);
+      border: 2px solid rgba(255,255,255,0.2);
+      border-radius: 10px;
+      color: #fff;
+      outline: none;
+      text-align: center;
+    }
+    .expression-input:focus {
+      border-color: #74b9ff;
+    }
+    .expression-input::placeholder {
+      color: rgba(255,255,255,0.3);
+    }
+    
+    .operators {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .op-btn {
+      width: 60px;
+      height: 60px;
+      font-size: 1.8rem;
+      background: rgba(255,255,255,0.1);
+      border: 2px solid rgba(255,255,255,0.2);
+      border-radius: 15px;
+      color: #fff;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .op-btn:hover {
+      background: #74b9ff;
+      border-color: #74b9ff;
+      transform: translateY(-3px);
+    }
+    .op-btn:active { transform: scale(0.95); }
+    
+    .action-btns {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    .btn {
+      padding: 12px 30px;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #74b9ff, #0984e3);
+      color: #fff;
+    }
+    .btn-secondary {
+      background: rgba(255,255,255,0.1);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+    .btn-danger {
+      background: linear-gradient(135deg, #f5576c, #ff6b6b);
+      color: #fff;
+    }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(0,0,0,0.3); }
+    
+    .result-message {
+      padding: 20px;
+      border-radius: 15px;
+      margin-top: 20px;
+      font-size: 1.2rem;
+      font-weight: 700;
+      display: none;
+    }
+    .result-message.show { display: block; animation: fadeIn 0.5s ease; }
+    .result-message.success {
+      background: linear-gradient(135deg, #4ecdc420, #44a08d40);
+      border: 2px solid #4ecdc4;
+      color: #4ecdc4;
+    }
+    .result-message.error {
+      background: linear-gradient(135deg, #f5576c20, #ff6b6b20);
+      border: 2px solid #f5576c;
+      color: #f5576c;
+    }
+    .result-message.hint {
+      background: linear-gradient(135deg, #74b9ff20, #0984e320);
+      border: 2px solid #74b9ff;
+      color: #74b9ff;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .used-numbers {
+      margin-top: 15px;
+      padding: 15px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 10px;
+    }
+    .used-numbers h4 { font-size: 0.9rem; color: rgba(255,255,255,0.5); margin-bottom: 10px; }
+    .used-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+    }
+    .used-tag {
+      padding: 5px 12px;
+      background: rgba(116, 185, 255, 0.2);
+      border-radius: 20px;
+      font-size: 0.9rem;
+      color: #74b9ff;
+    }
+  </style>
+</head>
+<body>
+  <a href="../index.html" class="back-btn">← 返回首页</a>
+  
+  <div class="container">
+    <h1>🧮 24点计算</h1>
+    <p class="subtitle">用四个数字和运算符号计算出24！</p>
+
+    <div class="stats-bar">
+      <div class="stat">
+        <div class="stat-value" id="score">0</div>
+        <div class="stat-label">得分</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value" id="round">1</div>
+        <div class="stat-label">回合</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value" id="streak">0</div>
+        <div class="stat-label">连胜</div>
+      </div>
+    </div>
+
+    <div class="cards-area">
+      <div class="target">目标: <strong>24</strong></div>
+      <div class="hint">点击数字卡片将其加入表达式</div>
+      
+      <div class="cards-display" id="cardsDisplay"></div>
+      
+      <div class="used-numbers">
+        <h4>已使用的数字</h4>
+        <div class="used-tags" id="usedTags"></div>
+      </div>
+    </div>
+
+    <div class="expression-area">
+      <div class="expression" id="expression"></div>
+      <input type="text" class="expression-input" id="expressionInput" placeholder="或在此输入表达式，如: (1+2)*3*4">
+    </div>
+
+    <div class="operators">
+      <button class="op-btn" onclick="addOperator('+')">+</button>
+      <button class="op-btn" onclick="addOperator('-')">−</button>
+      <button class="op-btn" onclick="addOperator('*')">×</button>
+      <button class="op-btn" onclick="addOperator('/')">÷</button>
+      <button class="op-btn" onclick="addOperator('(')">(</button>
+      <button class="op-btn" onclick="addOperator(')')">)</button>
+    </div>
+
+    <div class="action-btns">
+      <button class="btn btn-primary" onclick="submitAnswer()">提交答案</button>
+      <button class="btn btn-secondary" onclick="clearExpression()">清空</button>
+      <button class="btn btn-danger" onclick="skipRound()">跳过</button>
+    </div>
+
+    <div class="result-message" id="resultMessage"></div>
+  </div>
+
+  <script>
+    let numbers = [];
+    let usedNumbers = [];
+    let expression = '';
+    let score = 0;
+    let round = 1;
+    let streak = 0;
+
+    function generateNumbers() {
+      const possible = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+      numbers = [];
+      for (let i = 0; i < 4; i++) {
+        const idx = Math.floor(Math.random() * possible.length);
+        numbers.push(possible[idx]);
+      }
+      usedNumbers = [];
+      expression = '';
+      renderCards();
+      renderUsedNumbers();
+      document.getElementById('expression').textContent = '';
+      document.getElementById('expressionInput').value = '';
+      document.getElementById('resultMessage').className = 'result-message';
+    }
+
+    function renderCards() {
+      const display = document.getElementById('cardsDisplay');
+      display.innerHTML = numbers.map((num, i) => `
+        <div class="number-card ${usedNumbers.includes(i) ? 'used' : ''}" onclick="useNumber(${i})">${num}</div>
+      `).join('');
+    }
+
+    function renderUsedNumbers() {
+      const tags = document.getElementById('usedTags');
+      tags.innerHTML = usedNumbers.map(i => `<span class="used-tag">${numbers[i]}</span>`).join('');
+    }
+
+    function useNumber(index) {
+      if (usedNumbers.includes(index)) return;
+      usedNumbers.push(index);
+      expression += numbers[index];
+      document.getElementById('expression').textContent = expression;
+      document.getElementById('expressionInput').value = expression;
+      renderCards();
+      renderUsedNumbers();
+    }
+
+    function addOperator(op) {
+      expression += op;
+      document.getElementById('expression').textContent = expression;
+      document.getElementById('expressionInput').value = expression;
+    }
+
+    function clearExpression() {
+      expression = '';
+      usedNumbers = [];
+      document.getElementById('expression').textContent = '';
+      document.getElementById('expressionInput').value = '';
+      renderCards();
+      renderUsedNumbers();
+    }
+
+    function evaluate(expr) {
+      try {
+        const result = Function('"use strict"; return (' + expr + ')')();
+        return result;
+      } catch {
+        return null;
+      }
+    }
+
+    function submitAnswer() {
+      const expr = document.getElementById('expressionInput').value.trim();
+      if (!expr) {
+        showResult('请先输入表达式！', 'hint');
+        return;
+      }
+
+      const result = evaluate(expr);
+      
+      if (result === null) {
+        showResult('表达式无效，请检查格式！', 'error');
+        return;
+      }
+
+      if (Math.abs(result - 24) < 0.0001) {
+        score += 10 + streak * 2;
+        streak++;
+        showResult(`🎉 正确！答案是 ${result}！得分 +${10 + (streak-1) * 2}`, 'success');
+        updateStats();
+        setTimeout(() => {
+          round++;
+          document.getElementById('round').textContent = round;
+          generateNumbers();
+        }, 2000);
+      } else {
+        streak = 0;
+        showResult(`答案不对，结果是 ${result}，再试试吧！`, 'error');
+        updateStats();
+      }
+    }
+
+    function skipRound() {
+      streak = 0;
+      showResult('这题有点难，下一题加油！', 'hint');
+      updateStats();
+      setTimeout(() => {
+        round++;
+        document.getElementById('round').textContent = round;
+        generateNumbers();
+      }, 1500);
+    }
+
+    function showResult(msg, type) {
+      const el = document.getElementById('resultMessage');
+      el.textContent = msg;
+      el.className = `result-message show ${type}`;
+    }
+
+    function updateStats() {
+      document.getElementById('score').textContent = score;
+      document.getElementById('streak').textContent = streak;
+    }
+
+    document.getElementById('expressionInput').addEventListener('input', (e) => {
+      expression = e.target.value;
+      document.getElementById('expression').textContent = expression;
+    });
+
+    generateNumbers();
+  </script>
+</body>
+</html>

@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>⌨️ 打字速度测试</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+    .back-btn {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      padding: 10px 20px;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 10px;
+      color: #fff;
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: all 0.3s;
+      z-index: 100;
+    }
+    .back-btn:hover { background: rgba(255,255,255,0.2); }
+    .container {
+      max-width: 800px;
+      width: 100%;
+      text-align: center;
+      margin-top: 60px;
+    }
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+      background: linear-gradient(135deg, #4ecdc4, #44a08d);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .subtitle { color: rgba(255,255,255,0.6); margin-bottom: 30px; }
+    
+    .stats-row {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin-bottom: 30px;
+    }
+    .stat-box {
+      background: rgba(255,255,255,0.05);
+      border-radius: 15px;
+      padding: 20px 30px;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .stat-value { font-size: 2.5rem; font-weight: 700; color: #4ecdc4; }
+    .stat-label { font-size: 0.85rem; color: rgba(255,255,255,0.5); margin-top: 5px; }
+    
+    .text-display {
+      background: rgba(255,255,255,0.05);
+      border-radius: 20px;
+      padding: 30px;
+      margin-bottom: 20px;
+      border: 1px solid rgba(255,255,255,0.1);
+      font-size: 1.3rem;
+      line-height: 2;
+      text-align: left;
+    }
+    .text-display .char {
+      transition: all 0.1s;
+    }
+    .text-display .char.correct {
+      color: #4ecdc4;
+    }
+    .text-display .char.wrong {
+      color: #f5576c;
+      text-decoration: underline;
+    }
+    .text-display .char.current {
+      background: #667eea;
+      color: #fff;
+      border-radius: 3px;
+    }
+    .text-display .char.upcoming {
+      color: rgba(255,255,255,0.4);
+    }
+    
+    .input-area {
+      margin-bottom: 20px;
+    }
+    #typingInput {
+      width: 100%;
+      padding: 15px 20px;
+      font-size: 1.2rem;
+      background: rgba(255,255,255,0.1);
+      border: 2px solid rgba(255,255,255,0.2);
+      border-radius: 15px;
+      color: #fff;
+      outline: none;
+      transition: all 0.3s;
+    }
+    #typingInput:focus {
+      border-color: #667eea;
+      box-shadow: 0 0 20px rgba(102,126,234,0.3);
+    }
+    #typingInput:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    
+    .controls {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      margin-bottom: 30px;
+    }
+    .btn {
+      padding: 12px 30px;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: #fff;
+    }
+    .btn-secondary {
+      background: rgba(255,255,255,0.1);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(0,0,0,0.3); }
+    
+    .result-panel {
+      display: none;
+      background: rgba(255,255,255,0.05);
+      border-radius: 20px;
+      padding: 30px;
+      border: 1px solid rgba(255,255,255,0.1);
+      animation: fadeIn 0.5s ease;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .result-panel.show { display: block; }
+    .result-title {
+      font-size: 1.5rem;
+      margin-bottom: 20px;
+      color: #4ecdc4;
+    }
+    .result-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+    .result-stat {
+      background: rgba(255,255,255,0.05);
+      border-radius: 15px;
+      padding: 20px;
+    }
+    .result-stat .value { font-size: 2rem; font-weight: 700; }
+    .result-stat .label { font-size: 0.85rem; color: rgba(255,255,255,0.5); margin-top: 5px; }
+    
+    .timer {
+      font-size: 3rem;
+      font-weight: 700;
+      color: #ffeaa7;
+      margin-bottom: 20px;
+    }
+    
+    @media (max-width: 600px) {
+      .stats-row { flex-direction: column; gap: 15px; }
+      .result-stats { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <a href="../index.html" class="back-btn">← 返回首页</a>
+  
+  <div class="container">
+    <h1>⌨️ 打字速度测试</h1>
+    <p class="subtitle">挑战你的打字速度，看看谁能又快又准！</p>
+
+    <div class="stats-row">
+      <div class="stat-box">
+        <div class="stat-value" id="wpm">0</div>
+        <div class="stat-label">字/分钟</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value" id="accuracy">100%</div>
+        <div class="stat-label">准确率</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value" id="progress">0%</div>
+        <div class="stat-label">进度</div>
+      </div>
+    </div>
+
+    <div class="timer" id="timer">60</div>
+
+    <div class="text-display" id="textDisplay"></div>
+
+    <div class="input-area">
+      <input type="text" id="typingInput" placeholder="点击开始后在此输入..." autocomplete="off" autofocus>
+    </div>
+
+    <div class="controls">
+      <button class="btn btn-primary" id="startBtn" onclick="startGame()">开始测试</button>
+      <button class="btn btn-secondary" onclick="resetGame()">重新开始</button>
+    </div>
+
+    <div class="result-panel" id="resultPanel">
+      <div class="result-title">🎉 测试完成！</div>
+      <div class="result-stats">
+        <div class="result-stat">
+          <div class="value" id="finalWpm">0</div>
+          <div class="label">字/分钟</div>
+        </div>
+        <div class="result-stat">
+          <div class="value" id="finalAccuracy">0%</div>
+          <div class="label">准确率</div>
+        </div>
+        <div class="result-stat">
+          <div class="value" id="finalCorrect">0</div>
+          <div class="label">正确字数</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const texts = [
+      "编程是一门艺术，需要耐心和专注。每一行代码都像是一笔画，组合起来就能创造奇迹。",
+      "春天的风轻轻吹过，带来了花香和温暖。夏天的阳光明媚，照耀着大地和海洋。",
+      "夜空中的星星闪烁着光芒，像是无数颗钻石镶嵌在黑色的天幕上，让人感到无限遐想。",
+      "学习新的技能需要时间和努力，但只要坚持不懈，就一定能够取得进步和成功。",
+      "音乐是人类共同的语言，它能够跨越国界和文化的障碍，传递情感和美好的愿望。",
+      "运动不仅能够强身健体，还能释放压力，让人保持积极乐观的心态面对生活的挑战。",
+      "读书使人明智，旅行使人开阔，思考使人深刻。与书为伴，人生更加精彩和充实。"
+    ];
+
+    let targetText = "";
+    let currentIndex = 0;
+    let startTime = null;
+    let timerInterval = null;
+    let timeLeft = 60;
+    let correctCount = 0;
+    let totalTyped = 0;
+    let gameActive = false;
+
+    const typingInput = document.getElementById('typingInput');
+    const textDisplay = document.getElementById('textDisplay');
+    const timerEl = document.getElementById('timer');
+    const wpmEl = document.getElementById('wpm');
+    const accuracyEl = document.getElementById('accuracy');
+    const progressEl = document.getElementById('progress');
+    const startBtn = document.getElementById('startBtn');
+    const resultPanel = document.getElementById('resultPanel');
+
+    function initGame() {
+      targetText = texts[Math.floor(Math.random() * texts.length)];
+      currentIndex = 0;
+      correctCount = 0;
+      totalTyped = 0;
+      renderText();
+    }
+
+    function renderText() {
+      let html = '';
+      for (let i = 0; i < targetText.length; i++) {
+        let className = 'char';
+        if (i < currentIndex) {
+          className += ' correct';
+        } else if (i === currentIndex) {
+          className += ' current';
+        } else {
+          className += ' upcoming';
+        }
+        html += `<span class="${className}">${targetText[i]}</span>`;
+      }
+      textDisplay.innerHTML = html;
+      updateStats();
+    }
+
+    function updateStats() {
+      const progress = Math.round((currentIndex / targetText.length) * 100);
+      progressEl.textContent = progress + '%';
+      
+      if (startTime && currentIndex > 0) {
+        const elapsed = (Date.now() - startTime) / 1000 / 60;
+        const wpm = Math.round((currentIndex / 5) / elapsed);
+        wpmEl.textContent = wpm;
+      }
+      
+      if (totalTyped > 0) {
+        const accuracy = Math.round((correctCount / totalTyped) * 100);
+        accuracyEl.textContent = accuracy + '%';
+      }
+    }
+
+    function startGame() {
+      initGame();
+      gameActive = true;
+      startTime = Date.now();
+      timeLeft = 60;
+      typingInput.disabled = false;
+      typingInput.value = '';
+      typingInput.focus();
+      startBtn.disabled = true;
+      resultPanel.classList.remove('show');
+      timerEl.textContent = timeLeft;
+
+      timerInterval = setInterval(() => {
+        timeLeft--;
+        timerEl.textContent = timeLeft;
+        updateStats();
+        if (timeLeft <= 0) {
+          endGame();
+        }
+      }, 1000);
+    }
+
+    function endGame() {
+      gameActive = false;
+      clearInterval(timerInterval);
+      typingInput.disabled = true;
+      startBtn.disabled = false;
+
+      const elapsed = 60 / 60;
+      const wpm = Math.round((currentIndex / 5) / elapsed);
+      const accuracy = totalTyped > 0 ? Math.round((correctCount / totalTyped) * 100) : 0;
+
+      document.getElementById('finalWpm').textContent = wpm;
+      document.getElementById('finalAccuracy').textContent = accuracy + '%';
+      document.getElementById('finalCorrect').textContent = correctCount;
+      resultPanel.classList.add('show');
+    }
+
+    function resetGame() {
+      gameActive = false;
+      clearInterval(timerInterval);
+      currentIndex = 0;
+      correctCount = 0;
+      totalTyped = 0;
+      startTime = null;
+      timeLeft = 60;
+      timerEl.textContent = '60';
+      wpmEl.textContent = '0';
+      accuracyEl.textContent = '100%';
+      progressEl.textContent = '0%';
+      typingInput.disabled = true;
+      typingInput.value = '';
+      startBtn.disabled = false;
+      resultPanel.classList.remove('show');
+      initGame();
+    }
+
+    typingInput.addEventListener('input', (e) => {
+      if (!gameActive) return;
+      
+      const typed = e.target.value;
+      const lastTyped = typed[typed.length - 1];
+      const expected = targetText[currentIndex];
+
+      if (lastTyped === expected) {
+        correctCount++;
+        currentIndex++;
+      } else if (lastTyped) {
+        totalTyped++;
+        currentIndex++;
+      }
+      
+      totalTyped++;
+      typingInput.value = typed.slice(0, -1);
+      renderText();
+
+      if (currentIndex >= targetText.length) {
+        endGame();
+      }
+    });
+
+    initGame();
+  </script>
+</body>
+</html>

@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🎲 幸运色子</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+    .back-btn {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      padding: 10px 20px;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 10px;
+      color: #fff;
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: all 0.3s;
+      z-index: 100;
+    }
+    .back-btn:hover { background: rgba(255,255,255,0.2); }
+    .container {
+      max-width: 600px;
+      width: 100%;
+      text-align: center;
+      margin-top: 60px;
+    }
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+      background: linear-gradient(135deg, #a29bfe, #6c5ce7);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .subtitle { color: rgba(255,255,255,0.6); margin-bottom: 30px; }
+    
+    .stats-row {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+    .stat-box {
+      background: rgba(255,255,255,0.05);
+      border-radius: 15px;
+      padding: 15px 25px;
+      border: 1px solid rgba(255,255,255,0.1);
+      flex: 1;
+    }
+    .stat-value { font-size: 1.8rem; font-weight: 700; }
+    .stat-value.gold { color: #ffeaa7; }
+    .stat-value.purple { color: #a29bfe; }
+    .stat-value.green { color: #4ecdc4; }
+    .stat-label { font-size: 0.8rem; color: rgba(255,255,255,0.5); margin-top: 5px; }
+    
+    .dice-area {
+      background: rgba(255,255,255,0.05);
+      border-radius: 30px;
+      padding: 40px;
+      margin-bottom: 30px;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    .dice-container {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin-bottom: 30px;
+    }
+    .dice-wrapper {
+      text-align: center;
+    }
+    .dice-label {
+      font-size: 0.9rem;
+      color: rgba(255,255,255,0.5);
+      margin-bottom: 10px;
+    }
+    .dice {
+      width: 100px;
+      height: 100px;
+      background: linear-gradient(135deg, #a29bfe, #6c5ce7);
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3.5rem;
+      font-weight: 700;
+      box-shadow: 0 10px 30px rgba(162, 155, 254, 0.4);
+      transition: all 0.3s;
+    }
+    .dice.rolling {
+      animation: shake 0.5s ease-in-out infinite;
+    }
+    @keyframes shake {
+      0%, 100% { transform: rotate(0deg); }
+      25% { transform: rotate(-15deg) scale(1.1); }
+      50% { transform: rotate(0deg); }
+      75% { transform: rotate(15deg) scale(1.1); }
+    }
+    .dice.highlight {
+      box-shadow: 0 0 30px rgba(255, 234, 167, 0.6);
+      transform: scale(1.1);
+    }
+    
+    .dice-face {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(3, 1fr);
+      width: 70px;
+      height: 70px;
+      gap: 5px;
+    }
+    .dot {
+      width: 15px;
+      height: 15px;
+      background: #fff;
+      border-radius: 50%;
+      opacity: 0;
+    }
+    .dot.show { opacity: 1; }
+    
+    .result-text {
+      font-size: 1.5rem;
+      font-weight: 700;
+      padding: 15px;
+      border-radius: 15px;
+      min-height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .result-text.win {
+      background: linear-gradient(135deg, #ffeaa720, #fdcb6e20);
+      color: #ffeaa7;
+      border: 2px solid #ffeaa7;
+    }
+    .result-text.lose {
+      background: linear-gradient(135deg, #f5576c20, #ff6b6b20);
+      color: #f5576c;
+      border: 2px solid #f5576c;
+    }
+    .result-text.draw {
+      background: linear-gradient(135deg, #a29bfe20, #6c5ce720);
+      color: #a29bfe;
+      border: 2px solid #a29bfe;
+    }
+    
+    .bet-section {
+      margin-bottom: 20px;
+    }
+    .bet-label {
+      font-size: 1rem;
+      color: rgba(255,255,255,0.7);
+      margin-bottom: 10px;
+    }
+    .bet-options {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+    }
+    .bet-btn {
+      padding: 12px 25px;
+      border: 2px solid rgba(255,255,255,0.2);
+      border-radius: 12px;
+      background: rgba(255,255,255,0.1);
+      color: #fff;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .bet-btn:hover, .bet-btn.active {
+      border-color: #ffeaa7;
+      background: rgba(255, 234, 167, 0.2);
+      box-shadow: 0 0 15px rgba(255, 234, 167, 0.3);
+    }
+    
+    .roll-btn {
+      padding: 18px 50px;
+      font-size: 1.3rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #a29bfe, #6c5ce7);
+      border: none;
+      border-radius: 15px;
+      color: #fff;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 5px 25px rgba(162, 155, 254, 0.4);
+    }
+    .roll-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 35px rgba(162, 155, 254, 0.6);
+    }
+    .roll-btn:active { transform: scale(0.95); }
+    .roll-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    
+    .history-section {
+      margin-top: 30px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 20px;
+      padding: 20px;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .history-section h3 { font-size: 1rem; color: rgba(255,255,255,0.7); margin-bottom: 15px; }
+    .history-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+    }
+    .history-item {
+      padding: 8px 15px;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .history-item.win { background: rgba(255, 234, 167, 0.2); color: #ffeaa7; }
+    .history-item.lose { background: rgba(245, 87, 108, 0.2); color: #f5576c; }
+    
+    .rules {
+      margin-top: 30px;
+      text-align: left;
+      background: rgba(255,255,255,0.05);
+      border-radius: 15px;
+      padding: 20px;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .rules h3 { font-size: 1rem; color: #a29bfe; margin-bottom: 10px; }
+    .rules ul { color: rgba(255,255,255,0.7); font-size: 0.9rem; padding-left: 20px; }
+    .rules li { margin-bottom: 5px; }
+  </style>
+</head>
+<body>
+  <a href="../index.html" class="back-btn">← 返回首页</a>
+  
+  <div class="container">
+    <h1>🎲 幸运色子</h1>
+    <p class="subtitle">投掷色子，和AI比大小，试试你的运气！</p>
+
+    <div class="stats-row">
+      <div class="stat-box">
+        <div class="stat-value gold" id="chips">100</div>
+        <div class="stat-label">金币</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value purple" id="wins">0</div>
+        <div class="stat-label">胜利</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value green" id="streak">0</div>
+        <div class="stat-label">连胜</div>
+      </div>
+    </div>
+
+    <div class="dice-area">
+      <div class="dice-container">
+        <div class="dice-wrapper">
+          <div class="dice-label">你的色子</div>
+          <div class="dice" id="playerDice">?</div>
+        </div>
+        <div class="dice-wrapper">
+          <div class="dice-label">AI 色子</div>
+          <div class="dice" id="aiDice">?</div>
+        </div>
+      </div>
+      
+      <div class="result-text" id="resultText"></div>
+    </div>
+
+    <div class="bet-section">
+      <div class="bet-label">选择投注金额</div>
+      <div class="bet-options">
+        <button class="bet-btn" onclick="setBet(10)">10</button>
+        <button class="bet-btn active" onclick="setBet(20)">20</button>
+        <button class="bet-btn" onclick="setBet(50)">50</button>
+        <button class="bet-btn" onclick="setBet(100)">100</button>
+      </div>
+    </div>
+
+    <button class="roll-btn" id="rollBtn" onclick="rollDice()">🎲 投掷色子</button>
+
+    <div class="history-section">
+      <h3>📜 最近记录</h3>
+      <div class="history-list" id="historyList"></div>
+    </div>
+
+    <div class="rules">
+      <h3>🎯 游戏规则</h3>
+      <ul>
+        <li>同时投掷两枚色子，比较点数大小</li>
+        <li>你的点数 > AI 点数 = 胜利，获得双倍投注</li>
+        <li>你的点数 < AI 点数 = 失败，损失投注金额</li>
+        <li>点数相同 = 平局，退还投注金额</li>
+        <li>连胜会获得额外金币奖励！</li>
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    let chips = 100;
+    let bet = 20;
+    let wins = 0;
+    let currentStreak = 0;
+    let history = [];
+    let isRolling = false;
+
+    function setBet(amount) {
+      if (amount > chips) return;
+      bet = amount;
+      document.querySelectorAll('.bet-btn').forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+    }
+
+    function rollDice() {
+      if (isRolling || chips < bet) return;
+      isRolling = true;
+      
+      chips -= bet;
+      updateStats();
+      
+      const playerDice = document.getElementById('playerDice');
+      const aiDice = document.getElementById('aiDice');
+      const rollBtn = document.getElementById('rollBtn');
+      
+      playerDice.classList.add('rolling');
+      aiDice.classList.add('rolling');
+      playerDice.textContent = '?';
+      aiDice.textContent = '?';
+      rollBtn.disabled = true;
+      document.getElementById('resultText').className = 'result-text';
+      document.getElementById('resultText').textContent = '';
+
+      let rollCount = 0;
+      const rollInterval = setInterval(() => {
+        playerDice.textContent = Math.floor(Math.random() * 6) + 1;
+        aiDice.textContent = Math.floor(Math.random() * 6) + 1;
+        rollCount++;
+        if (rollCount >= 10) {
+          clearInterval(rollInterval);
+          finishRoll();
+        }
+      }, 100);
+    }
+
+    function finishRoll() {
+      const playerDice = document.getElementById('playerDice');
+      const aiDice = document.getElementById('aiDice');
+      const rollBtn = document.getElementById('rollBtn');
+      
+      const playerValue = Math.floor(Math.random() * 6) + 1;
+      const aiValue = Math.floor(Math.random() * 6) + 1;
+      
+      playerDice.classList.remove('rolling');
+      aiDice.classList.remove('rolling');
+      playerDice.textContent = playerValue;
+      aiDice.textContent = aiValue;
+      rollBtn.disabled = false;
+      isRolling = false;
+
+      const resultText = document.getElementById('resultText');
+      
+      if (playerValue > aiValue) {
+        chips += bet * 2;
+        currentStreak++;
+        wins++;
+        const bonus = Math.min(currentStreak - 1, 5) * 5;
+        if (bonus > 0) chips += bonus;
+        resultText.className = 'result-text win';
+        resultText.textContent = `🎉 你赢了！+${bet * 2 + bonus} 金币${bonus > 0 ? ` (连胜奖励 +${bonus})` : ''}`;
+        history.unshift('win');
+        playerDice.classList.add('highlight');
+      } else if (playerValue < aiValue) {
+        currentStreak = 0;
+        resultText.className = 'result-text lose';
+        resultText.textContent = `😅 你输了！-${bet} 金币`;
+        history.unshift('lose');
+      } else {
+        chips += bet;
+        resultText.className = 'result-text draw';
+        resultText.textContent = `🤝 平局！退还 ${bet} 金币`;
+        history.unshift('draw');
+      }
+
+      if (history.length > 10) history.pop();
+      updateStats();
+      renderHistory();
+      
+      if (chips <= 0) {
+        setTimeout(() => {
+          alert('金币用完了！点击确定重新开始。');
+          chips = 100;
+          wins = 0;
+          currentStreak = 0;
+          history = [];
+          updateStats();
+          renderHistory();
+        }, 500);
+      }
+    }
+
+    function updateStats() {
+      document.getElementById('chips').textContent = chips;
+      document.getElementById('wins').textContent = wins;
+      document.getElementById('streak').textContent = currentStreak;
+      
+      document.querySelectorAll('.bet-btn').forEach(btn => {
+        btn.style.opacity = parseInt(btn.textContent) > chips ? '0.3' : '1';
+        btn.style.pointerEvents = parseInt(btn.textContent) > chips ? 'none' : 'auto';
+      });
+    }
+
+    function renderHistory() {
+      const list = document.getElementById('historyList');
+      const labels = { win: '胜', lose: '负', draw: '平' };
+      list.innerHTML = history.map(h => 
+        `<div class="history-item ${h}">${labels[h]}</div>`
+      ).join('');
+    }
+
+    updateStats();
+  </script>
+</body>
+</html>

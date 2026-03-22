@@ -2,10 +2,481 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <meta http-equiv="refresh" content="0; url=guess-number-game/web-game.html">
-  <title>跳转中...</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🎮 AI 小游戏中心</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary: #667eea;
+      --secondary: #764ba2;
+      --accent: #f093fb;
+      --dark: #1a1a2e;
+      --darker: #16213e;
+    }
+
+    body {
+      font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      color: #fff;
+      overflow-x: hidden;
+    }
+
+    /* 背景动画粒子 */
+    .particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 0;
+    }
+
+    .particle {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      animation: float 15s infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      100% { transform: translateY(-100vh) rotate(720deg); opacity: 0; }
+    }
+
+    /* 导航栏 */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      background: rgba(26, 26, 46, 0.95);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 0 40px;
+    }
+
+    .nav-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 70px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 1.5rem;
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .logo-icon {
+      font-size: 2rem;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 30px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: rgba(255, 255, 255, 0.7);
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.3s;
+      position: relative;
+    }
+
+    .nav-links a:hover {
+      color: #fff;
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      transition: width 0.3s;
+    }
+
+    .nav-links a:hover::after {
+      width: 100%;
+    }
+
+    /* 主容器 */
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 120px 40px 60px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* 英雄区 */
+    .hero {
+      text-align: center;
+      margin-bottom: 60px;
+      animation: fadeInUp 0.8s ease;
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .hero h1 {
+      font-size: 3.5rem;
+      font-weight: 900;
+      margin-bottom: 20px;
+      background: linear-gradient(135deg, #fff 0%, var(--accent) 50%, var(--primary) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero p {
+      font-size: 1.2rem;
+      color: rgba(255, 255, 255, 0.7);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .stats {
+      display: flex;
+      justify-content: center;
+      gap: 50px;
+      margin-top: 40px;
+    }
+
+    .stat-item {
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 2.5rem;
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .stat-label {
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.5);
+      margin-top: 5px;
+    }
+
+    /* 游戏网格 */
+    .games-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 30px;
+    }
+
+    /* 游戏卡片 */
+    .game-card {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 24px;
+      padding: 30px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      animation: fadeInUp 0.8s ease backwards;
+    }
+
+    .game-card:nth-child(1) { animation-delay: 0.1s; }
+    .game-card:nth-child(2) { animation-delay: 0.2s; }
+    .game-card:nth-child(3) { animation-delay: 0.3s; }
+    .game-card:nth-child(4) { animation-delay: 0.4s; }
+    .game-card:nth-child(5) { animation-delay: 0.5s; }
+    .game-card:nth-child(6) { animation-delay: 0.6s; }
+
+    .game-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
+      transform: scaleX(0);
+      transition: transform 0.4s;
+    }
+
+    .game-card:hover::before {
+      transform: scaleX(1);
+    }
+
+    .game-card:hover {
+      transform: translateY(-10px);
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.2);
+      box-shadow: 0 20px 60px rgba(102, 126, 234, 0.3);
+    }
+
+    .game-icon {
+      width: 80px;
+      height: 80px;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+      position: relative;
+    }
+
+    .game-card:nth-child(1) .game-icon { background: linear-gradient(135deg, #667eea, #764ba2); }
+    .game-card:nth-child(2) .game-icon { background: linear-gradient(135deg, #f093fb, #f5576c); }
+    .game-card:nth-child(3) .game-icon { background: linear-gradient(135deg, #4ecdc4, #44a08d); }
+    .game-card:nth-child(4) .game-icon { background: linear-gradient(135deg, #ffeaa7, #fdcb6e); }
+    .game-card:nth-child(5) .game-icon { background: linear-gradient(135deg, #74b9ff, #0984e3); }
+    .game-card:nth-child(6) .game-icon { background: linear-gradient(135deg, #a29bfe, #6c5ce7); }
+
+    .game-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: #fff;
+    }
+
+    .game-desc {
+      font-size: 0.95rem;
+      color: rgba(255, 255, 255, 0.6);
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+
+    .game-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .tag {
+      padding: 5px 12px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      font-size: 0.8rem;
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    .play-btn {
+      position: absolute;
+      bottom: 30px;
+      right: 30px;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      border: none;
+      color: #fff;
+      font-size: 1.2rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .play-btn:hover {
+      transform: scale(1.1);
+      box-shadow: 0 6px 25px rgba(102, 126, 234, 0.6);
+    }
+
+    /* 页脚 */
+    footer {
+      text-align: center;
+      padding: 40px;
+      color: rgba(255, 255, 255, 0.4);
+      font-size: 0.9rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    footer a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    /* 响应式 */
+    @media (max-width: 768px) {
+      .hero h1 { font-size: 2.5rem; }
+      .nav-links { display: none; }
+      .container { padding: 100px 20px 40px; }
+      .games-grid { grid-template-columns: 1fr; }
+      .stats { flex-direction: column; gap: 20px; }
+    }
+  </style>
 </head>
 <body>
-  <p>正在跳转到游戏... <a href="guess-number-game/web-game.html">点击这里</a></p>
+  <!-- 背景粒子 -->
+  <div class="particles" id="particles"></div>
+
+  <!-- 导航栏 -->
+  <nav>
+    <div class="nav-content">
+      <div class="logo">
+        <span class="logo-icon">🎮</span>
+        <span>AI 小游戏中心</span>
+      </div>
+      <ul class="nav-links">
+        <li><a href="#home">首页</a></li>
+        <li><a href="#games">游戏列表</a></li>
+        <li><a href="#about">关于我们</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- 主容器 -->
+  <div class="container">
+    <!-- 英雄区 -->
+    <section class="hero" id="home">
+      <h1>🎯 玩转趣味小游戏</h1>
+      <p>精选多款益智趣味小游戏，锻炼思维，放松身心，随时随地享受游戏乐趣！</p>
+      <div class="stats">
+        <div class="stat-item">
+          <div class="stat-value">6</div>
+          <div class="stat-label">精选游戏</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">100%</div>
+          <div class="stat-label">免费游玩</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">0</div>
+          <div class="stat-label">下载安装</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 游戏列表 -->
+    <section class="games-grid" id="games">
+      <!-- 猜数字 -->
+      <div class="game-card" onclick="location.href='guess-number-game/web-game.html'">
+        <div class="game-icon">🎯</div>
+        <h3 class="game-title">猜数字</h3>
+        <p class="game-desc">AI 会想一个 1-100 的数字，看看你能否用最少的次数猜中它！每次猜测都会获得提示哦~</p>
+        <div class="game-tags">
+          <span class="tag">益智</span>
+          <span class="tag">逻辑推理</span>
+          <span class="tag">适合新手</span>
+        </div>
+        <button class="play-btn">▶</button>
+      </div>
+
+      <!-- 石头剪刀布 -->
+      <div class="game-card" onclick="location.href='rock-paper-scissors/index.html'">
+        <div class="game-icon">✊</div>
+        <h3 class="game-title">石头剪刀布</h3>
+        <p class="game-desc">经典的猜拳游戏！和 AI 来一场精彩的对决，看看谁才是真正的猜拳之王！</p>
+        <div class="game-tags">
+          <span class="tag">经典</span>
+          <span class="tag">运气</span>
+          <span class="tag">快节奏</span>
+        </div>
+        <button class="play-btn">▶</button>
+      </div>
+
+      <!-- 打字速度测试 -->
+      <div class="game-card" onclick="location.href='typing-test/index.html'">
+        <div class="game-icon">⌨️</div>
+        <h3 class="game-title">打字速度测试</h3>
+        <p class="game-desc">挑战你的打字速度！一段有趣的文字，看看你能在多长时间内准确打完！</p>
+        <div class="game-tags">
+          <span class="tag">技巧</span>
+          <span class="tag">速度</span>
+          <span class="tag">挑战</span>
+        </div>
+        <button class="play-btn">▶</button>
+      </div>
+
+      <!-- 记忆翻牌 -->
+      <div class="game-card" onclick="location.href='memory-game/index.html'">
+        <div class="game-icon">🧠</div>
+        <h3 class="game-title">记忆翻牌</h3>
+        <p class="game-desc">考验你的记忆力！翻开卡片记住图案，找到所有配对相同图案的卡片！</p>
+        <div class="game-tags">
+          <span class="tag">记忆</span>
+          <span class="tag">配对</span>
+          <span class="tag">专注</span>
+        </div>
+        <button class="play-btn">▶</button>
+      </div>
+
+      <!-- 24点计算 -->
+      <div class="game-card" onclick="location.href='24-points/index.html'">
+        <div class="game-icon">🧮</div>
+        <h3 class="game-title">24点计算</h3>
+        <p class="game-desc">用4个数字和加减乘除运算，算出24！开动脑筋，看看你能想到多少种解法！</p>
+        <div class="game-tags">
+          <span class="tag">数学</span>
+          <span class="tag">运算</span>
+          <span class="tag">烧脑</span>
+        </div>
+        <button class="play-btn">▶</button>
+      </div>
+
+      <!-- 幸运色子 -->
+      <div class="game-card" onclick="location.href='dice-game/index.html'">
+        <div class="game-icon">🎲</div>
+        <h3 class="game-title">幸运色子</h3>
+        <p class="game-desc">投掷色子，看看你的运气如何！连续掷出高点数，挑战你的幸运极限！</p>
+        <div class="game-tags">
+          <span class="tag">运气</span>
+          <span class="tag">概率</span>
+          <span class="tag">休闲</span>
+        </div>
+        <button class="play-btn">▶</button>
+      </div>
+    </section>
+  </div>
+
+  <!-- 页脚 -->
+  <footer id="about">
+    <p>Made with ❤️ by <a href="https://github.com/jzyztzn" target="_blank">@jzyztzn</a></p>
+    <p style="margin-top: 10px;">© 2026 AI 小游戏中心 - 开源免费</p>
+  </footer>
+
+  <script>
+    // 创建背景粒子
+    const particlesContainer = document.getElementById('particles');
+    for (let i = 0; i < 50; i++) {
+      const particle = document.createElement('div');
+      particle.className = 'particle';
+      particle.style.left = Math.random() * 100 + '%';
+      particle.style.animationDelay = Math.random() * 15 + 's';
+      particle.style.animationDuration = (15 + Math.random() * 10) + 's';
+      particlesContainer.appendChild(particle);
+    }
+  </script>
 </body>
 </html>
