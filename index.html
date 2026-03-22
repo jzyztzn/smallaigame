@@ -16,9 +16,6 @@
       --primary: #667eea;
       --secondary: #764ba2;
       --accent: #f093fb;
-      --hedgehog: #8B4513;
-      --hedgehog-light: #D2691E;
-      --grass: #228B22;
     }
 
     body {
@@ -91,16 +88,6 @@
       background-clip: text;
     }
 
-    .logo-icon {
-      font-size: 2rem;
-      animation: hedgehogBounce 1s ease infinite;
-    }
-
-    @keyframes hedgehogBounce {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-5px); }
-    }
-
     .nav-links {
       display: flex;
       gap: 30px;
@@ -143,10 +130,11 @@
       z-index: 1;
     }
 
-    /* 英雄区 */
+    /* 英雄区 - 雪战场景 */
     .hero {
       text-align: center;
       margin-bottom: 60px;
+      position: relative;
       animation: fadeInUp 0.8s ease;
     }
 
@@ -165,25 +153,198 @@
       background-clip: text;
     }
 
-    .hero-mascot {
-      font-size: 5rem;
-      margin-bottom: 20px;
-      animation: mascotJump 2s ease infinite;
-      display: inline-block;
-    }
-
-    @keyframes mascotJump {
-      0%, 100% { transform: translateY(0) rotate(-5deg); }
-      25% { transform: translateY(-20px) rotate(5deg); }
-      50% { transform: translateY(0) rotate(-5deg); }
-      75% { transform: translateY(-15px) rotate(5deg); }
-    }
-
     .hero p {
       font-size: 1.2rem;
       color: rgba(255, 255, 255, 0.7);
       max-width: 600px;
       margin: 0 auto;
+    }
+
+    /* 雪战场地 */
+    .snow battlefield {
+      position: relative;
+      width: 100%;
+      max-width: 800px;
+      height: 300px;
+      margin: 40px auto;
+      background: linear-gradient(180deg, #87CEEB 0%, #E0F4FF 60%, #fff 100%);
+      border-radius: 30px;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+
+    .snowfield {
+      position: relative;
+      width: 100%;
+      height: 300px;
+      margin: 40px auto;
+      max-width: 800px;
+      border-radius: 30px;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+
+    /* 雪地 */
+    .snow-ground {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 100px;
+      background: linear-gradient(180deg, #E8F4F8 0%, #fff 100%);
+    }
+
+    /* 飘落的雪花 */
+    .snowflake {
+      position: absolute;
+      color: #fff;
+      font-size: 1rem;
+      animation: snowfall linear infinite;
+      opacity: 0.8;
+      text-shadow: 0 0 5px rgba(255,255,255,0.8);
+    }
+
+    @keyframes snowfall {
+      0% { transform: translateY(-20px) rotate(0deg); opacity: 0; }
+      10% { opacity: 0.8; }
+      90% { opacity: 0.8; }
+      100% { transform: translateY(320px) rotate(360deg); opacity: 0; }
+    }
+
+    /* 雪堆 */
+    .snow-mound {
+      position: absolute;
+      bottom: 60px;
+      width: 120px;
+      height: 50px;
+      background: #fff;
+      border-radius: 50% 50% 0 0;
+      box-shadow: inset 0 -10px 20px rgba(200,220,230,0.5);
+    }
+
+    .snow-mound.left { left: 50px; }
+    .snow-mound.right { right: 50px; }
+
+    /* 卡通小刺猬 - 男 */
+    .hedgehog-male {
+      position: absolute;
+      bottom: 85px;
+      left: 80px;
+      width: 100px;
+      height: 120px;
+      animation: hedgehogThrowLeft 4s ease-in-out infinite;
+      transform-origin: center bottom;
+    }
+
+    @keyframes hedgehogThrowLeft {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      15% { transform: translateY(-20px) rotate(-5deg); }
+      30% { transform: translateY(0) rotate(15deg); }
+      50% { transform: translateY(-10px) rotate(10deg); }
+      70% { transform: translateY(0) rotate(0deg); }
+    }
+
+    /* 卡通小刺猬 - 女 */
+    .hedgehog-female {
+      position: absolute;
+      bottom: 85px;
+      right: 80px;
+      width: 100px;
+      height: 120px;
+      animation: hedgehogThrowRight 4s ease-in-out infinite;
+      animation-delay: 2s;
+      transform-origin: center bottom;
+    }
+
+    @keyframes hedgehogThrowRight {
+      0%, 100% { transform: translateY(0) rotate(0deg) scaleX(-1); }
+      15% { transform: translateY(-20px) rotate(-5deg) scaleX(-1); }
+      30% { transform: translateY(0) rotate(-15deg) scaleX(-1); }
+      50% { transform: translateY(-10px) rotate(-10deg) scaleX(-1); }
+      70% { transform: translateY(0) rotate(0deg) scaleX(-1); }
+    }
+
+    /* 刺猬身体 SVG */
+    .hedgehog-body {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* 飞行的雪球 */
+    .snowball {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      background: radial-gradient(circle at 30% 30%, #fff, #cce5ff);
+      border-radius: 50%;
+      box-shadow: 0 0 10px rgba(255,255,255,0.8);
+    }
+
+    .snowball.male-throw {
+      left: 120px;
+      bottom: 130px;
+      animation: snowballFlyRight 4s ease-in-out infinite;
+    }
+
+    @keyframes snowballFlyRight {
+      0%, 15% { transform: translate(0, 0) scale(0); opacity: 0; }
+      20% { transform: translate(50px, -30px) scale(1); opacity: 1; }
+      40% { transform: translate(250px, -50px) scale(0.8); opacity: 1; }
+      50%, 100% { transform: translate(400px, 0) scale(0); opacity: 0; }
+    }
+
+    .snowball.female-throw {
+      right: 120px;
+      bottom: 130px;
+      animation: snowballFlyLeft 4s ease-in-out infinite;
+      animation-delay: 2s;
+    }
+
+    @keyframes snowballFlyLeft {
+      0%, 15% { transform: translate(0, 0) scale(0); opacity: 0; }
+      20% { transform: translate(-50px, -30px) scale(1); opacity: 1; }
+      40% { transform: translate(-250px, -50px) scale(0.8); opacity: 1; }
+      50%, 100% { transform: translate(-400px, 0) scale(0); opacity: 0; }
+    }
+
+    /* 击中特效 */
+    .hit-effect {
+      position: absolute;
+      font-size: 2rem;
+      opacity: 0;
+    }
+
+    .hit-effect.male-hit {
+      right: 100px;
+      top: 80px;
+      animation: hitShake 4s ease-in-out infinite;
+    }
+
+    .hit-effect.female-hit {
+      left: 100px;
+      top: 80px;
+      animation: hitShake 4s ease-in-out infinite;
+      animation-delay: 2s;
+    }
+
+    @keyframes hitShake {
+      0%, 35% { opacity: 0; transform: scale(0); }
+      40% { opacity: 1; transform: scale(1.2); }
+      45% { transform: scale(1) translateX(-5px); }
+      50% { transform: scale(1.1) translateX(5px); }
+      55% { transform: scale(1) translateX(-5px); }
+      60% { opacity: 0; transform: scale(1); }
+      100% { opacity: 0; }
+    }
+
+    /* 雪球轨迹 */
+    .trail {
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      background: rgba(255,255,255,0.6);
+      border-radius: 50%;
     }
 
     .stats {
@@ -262,7 +423,6 @@
       box-shadow: 0 20px 60px rgba(102, 126, 234, 0.3);
     }
 
-    /* 点击特效 */
     .game-card.clicked {
       animation: cardClick 0.5s ease;
     }
@@ -349,62 +509,6 @@
       transform: scale(1.1) rotate(10deg);
       box-shadow: 0 6px 25px rgba(102, 126, 234, 0.6);
     }
-
-    /* 底部小刺猬区域 */
-    .hedgehog-ground {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: 80px;
-      background: linear-gradient(to top, #1a472a, #2d5a3d);
-      z-index: 50;
-      overflow: hidden;
-    }
-
-    .grass {
-      position: absolute;
-      bottom: 40px;
-      width: 100%;
-      height: 30px;
-    }
-
-    .grass-blade {
-      position: absolute;
-      bottom: 0;
-      width: 8px;
-      background: linear-gradient(to top, #228B22, #32CD32);
-      border-radius: 50% 50% 0 0;
-      transform-origin: bottom center;
-      animation: grassWave 2s ease-in-out infinite;
-    }
-
-    @keyframes grassWave {
-      0%, 100% { transform: rotate(-5deg); }
-      50% { transform: rotate(5deg); }
-    }
-
-    /* 蹦跳的小刺猬 */
-    .hedgehog {
-      position: absolute;
-      bottom: 45px;
-      font-size: 2rem;
-      animation: hedgehogHop 2s ease-in-out infinite;
-      filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.3));
-    }
-
-    @keyframes hedgehogHop {
-      0%, 100% { transform: translateY(0) rotate(-3deg); }
-      25% { transform: translateY(-25px) rotate(3deg); }
-      50% { transform: translateY(0) rotate(-3deg); }
-      75% { transform: translateY(-15px) rotate(3deg); }
-    }
-
-    .hedgehog.h1 { left: 10%; animation-delay: 0s; animation-duration: 2.2s; }
-    .hedgehog.h2 { left: 30%; animation-delay: 0.3s; animation-duration: 1.8s; }
-    .hedgehog.h3 { left: 50%; animation-delay: 0.6s; animation-duration: 2.5s; }
-    .hedgehog.h4 { left: 70%; animation-delay: 0.9s; animation-duration: 2s; }
-    .hedgehog.h5 { left: 85%; animation-delay: 1.2s; animation-duration: 2.3s; }
 
     /* 冲刺特效 */
     .speed-lines {
@@ -526,15 +630,14 @@
     /* 响应式 */
     @media (max-width: 768px) {
       .hero h1 { font-size: 2.5rem; }
-      .hero-mascot { font-size: 4rem; }
       .nav-links { display: none; }
       .container { padding: 100px 20px 120px; }
       .games-grid { grid-template-columns: 1fr; }
       .stats { flex-direction: column; gap: 20px; }
-      .hedgehog { font-size: 1.5rem; }
-      .hedgehog.h1 { left: 5%; }
-      .hedgehog.h3 { left: 45%; }
-      .hedgehog.h5 { left: 80%; }
+      .snowfield { height: 250px; }
+      .hedgehog-male, .hedgehog-female { transform: scale(0.8); }
+      .hedgehog-male { left: 30px; }
+      .hedgehog-female { right: 30px; }
     }
   </style>
 </head>
@@ -560,7 +663,35 @@
   <nav>
     <div class="nav-content">
       <div class="logo">
-        <span class="logo-icon">🦔</span>
+        <svg width="40" height="40" viewBox="0 0 100 100">
+          <!-- 刺猬身体 -->
+          <ellipse cx="50" cy="65" rx="35" ry="25" fill="#D2691E"/>
+          <!-- 刺 -->
+          <polygon points="20,50 25,25 35,50" fill="#8B4513"/>
+          <polygon points="35,45 42,15 50,45" fill="#8B4513"/>
+          <polygon points="50,45 55,12 62,45" fill="#8B4513"/>
+          <polygon points="62,45 68,18 75,50" fill="#8B4513"/>
+          <polygon points="72,50 78,30 85,55" fill="#8B4513"/>
+          <!-- 脸 -->
+          <circle cx="35" cy="60" r="18" fill="#D2691E"/>
+          <!-- 脸蛋 -->
+          <circle cx="28" cy="65" r="5" fill="#FFB6C1" opacity="0.6"/>
+          <circle cx="42" cy="65" r="5" fill="#FFB6C1" opacity="0.6"/>
+          <!-- 眼睛 -->
+          <circle cx="30" cy="58" r="4" fill="#333"/>
+          <circle cx="31" cy="57" r="1.5" fill="#fff"/>
+          <circle cx="40" cy="58" r="4" fill="#333"/>
+          <circle cx="41" cy="57" r="1.5" fill="#fff"/>
+          <!-- 鼻子 -->
+          <ellipse cx="35" cy="64" rx="3" ry="2" fill="#333"/>
+          <!-- 嘴巴 -->
+          <path d="M 32 68 Q 35 71 38 68" stroke="#333" stroke-width="1.5" fill="none"/>
+          <!-- 耳朵 -->
+          <ellipse cx="20" cy="52" rx="6" ry="8" fill="#D2691E"/>
+          <ellipse cx="20" cy="52" rx="3" ry="5" fill="#FFB6C1" opacity="0.5"/>
+          <ellipse cx="50" cy="52" rx="6" ry="8" fill="#D2691E"/>
+          <ellipse cx="50" cy="52" rx="3" ry="5" fill="#FFB6C1" opacity="0.5"/>
+        </svg>
         <span>小小刺猬</span>
       </div>
       <ul class="nav-links">
@@ -575,9 +706,133 @@
   <div class="container">
     <!-- 英雄区 -->
     <section class="hero" id="home">
-      <div class="hero-mascot">🦔</div>
       <h1>🎯 小小刺猬趣味游戏</h1>
-      <p>可爱小刺猬带你玩转趣味小游戏！每个游戏都有小刺猬相伴，快来一起冒险吧~</p>
+      <p>可爱小刺猬带你玩转趣味小游戏！快来一起和刺猬朋友们玩耍吧~</p>
+
+      <!-- 雪战场地 -->
+      <div class="snowfield">
+        <!-- 飘落的雪花 -->
+        <div class="snowflake" style="left: 10%; animation-duration: 4s; font-size: 0.8rem;">❄</div>
+        <div class="snowflake" style="left: 25%; animation-duration: 5s; animation-delay: 1s;">❄</div>
+        <div class="snowflake" style="left: 40%; animation-duration: 4.5s; animation-delay: 2s;">❄</div>
+        <div class="snowflake" style="left: 55%; animation-duration: 5.5s; animation-delay: 0.5s;">❄</div>
+        <div class="snowflake" style="left: 70%; animation-duration: 4s; animation-delay: 1.5s;">❄</div>
+        <div class="snowflake" style="left: 85%; animation-duration: 5s; animation-delay: 2.5s;">❄</div>
+        <div class="snowflake" style="left: 15%; animation-duration: 6s; animation-delay: 3s; font-size: 1.2rem;">❅</div>
+        <div class="snowflake" style="left: 45%; animation-duration: 5s; animation-delay: 0.8s; font-size: 1rem;">❅</div>
+        <div class="snowflake" style="left: 75%; animation-duration: 5.5s; animation-delay: 1.8s; font-size: 0.9rem;">❅</div>
+
+        <!-- 雪堆 -->
+        <div class="snow-mound left"></div>
+        <div class="snow-mound right"></div>
+
+        <!-- 雪地 -->
+        <div class="snow-ground"></div>
+
+        <!-- 男生刺猬 - 蓝色围巾 -->
+        <div class="hedgehog-male">
+          <svg viewBox="0 0 100 120" width="100" height="120">
+            <!-- 身体 -->
+            <ellipse cx="50" cy="85" rx="38" ry="28" fill="#D2691E"/>
+            <!-- 刺背 -->
+            <polygon points="15,70 22,35 35,65" fill="#8B4513"/>
+            <polygon points="30,60 40,20 52,58" fill="#8B4513"/>
+            <polygon points="50,58 58,15 66,58" fill="#8B4513"/>
+            <polygon points="65,60 72,22 82,68" fill="#8B4513"/>
+            <polygon points="78,68 85,40 92,75" fill="#8B4513"/>
+            <!-- 脸部 -->
+            <circle cx="30" cy="78" r="22" fill="#DEB887"/>
+            <!-- 围巾 -->
+            <path d="M 8 85 Q 15 95 30 98 Q 45 95 52 85" fill="#4169E1" stroke="#4169E1" stroke-width="3"/>
+            <rect x="8" y="85" width="8" height="20" fill="#4169E1" rx="2"/>
+            <!-- 腮红 -->
+            <circle cx="20" cy="82" r="6" fill="#FFB6C1" opacity="0.5"/>
+            <circle cx="40" cy="82" r="6" fill="#FFB6C1" opacity="0.5"/>
+            <!-- 眼睛 -->
+            <circle cx="24" cy="74" r="5" fill="#333"/>
+            <circle cx="25.5" cy="72.5" r="2" fill="#fff"/>
+            <circle cx="36" cy="74" r="5" fill="#333"/>
+            <circle cx="37.5" cy="72.5" r="2" fill="#fff"/>
+            <!-- 眼睫毛 -->
+            <path d="M 19 70 Q 24 67 29 70" stroke="#333" stroke-width="1.5" fill="none"/>
+            <path d="M 31 70 Q 36 67 41 70" stroke="#333" stroke-width="1.5" fill="none"/>
+            <!-- 鼻子 -->
+            <ellipse cx="30" cy="82" rx="4" ry="3" fill="#333"/>
+            <!-- 微笑 -->
+            <path d="M 25 88 Q 30 93 35 88" stroke="#333" stroke-width="2" fill="none"/>
+            <!-- 耳朵 -->
+            <ellipse cx="12" cy="65" rx="7" ry="10" fill="#DEB887"/>
+            <ellipse cx="12" cy="65" rx="4" ry="6" fill="#FFB6C1" opacity="0.4"/>
+            <ellipse cx="48" cy="65" rx="7" ry="10" fill="#DEB887"/>
+            <ellipse cx="48" cy="65" rx="4" ry="6" fill="#FFB6C1" opacity="0.4"/>
+            <!-- 手 -->
+            <ellipse cx="8" cy="95" rx="8" ry="6" fill="#DEB887"/>
+            <ellipse cx="52" cy="100" rx="8" ry="6" fill="#DEB887"/>
+            <!-- 脚 -->
+            <ellipse cx="35" cy="112" rx="10" ry="5" fill="#DEB887"/>
+            <ellipse cx="55" cy="112" rx="10" ry="5" fill="#DEB887"/>
+          </svg>
+        </div>
+
+        <!-- 女生刺猬 - 粉色蝴蝶结 -->
+        <div class="hedgehog-female">
+          <svg viewBox="0 0 100 120" width="100" height="120">
+            <!-- 身体 -->
+            <ellipse cx="50" cy="85" rx="38" ry="28" fill="#D2691E"/>
+            <!-- 刺背 -->
+            <polygon points="15,70 22,35 35,65" fill="#8B4513"/>
+            <polygon points="30,60 40,20 52,58" fill="#8B4513"/>
+            <polygon points="50,58 58,15 66,58" fill="#8B4513"/>
+            <polygon points="65,60 72,22 82,68" fill="#8B4513"/>
+            <polygon points="78,68 85,40 92,75" fill="#8B4513"/>
+            <!-- 脸部 -->
+            <circle cx="30" cy="78" r="22" fill="#DEB887"/>
+            <!-- 蝴蝶结 -->
+            <circle cx="50" cy="42" r="4" fill="#FF69B4"/>
+            <ellipse cx="42" cy="42" rx="8" ry="5" fill="#FF69B4"/>
+            <ellipse cx="58" cy="42" rx="8" ry="5" fill="#FF69B4"/>
+            <ellipse cx="50" cy="46" rx="4" ry="2" fill="#FF1493"/>
+            <!-- 腮红 -->
+            <circle cx="18" cy="80" r="7" fill="#FFB6C1" opacity="0.6"/>
+            <circle cx="42" cy="80" r="7" fill="#FFB6C1" opacity="0.6"/>
+            <!-- 眼睛 -->
+            <circle cx="22" cy="72" r="6" fill="#333"/>
+            <circle cx="23.5" cy="70.5" r="2.5" fill="#fff"/>
+            <circle cx="38" cy="72" r="6" fill="#333"/>
+            <circle cx="39.5" cy="70.5" r="2.5" fill="#fff"/>
+            <!-- 眼睫毛 -->
+            <path d="M 16 68 Q 22 64 28 68" stroke="#333" stroke-width="2" fill="none"/>
+            <path d="M 32 68 Q 38 64 44 68" stroke="#333" stroke-width="2" fill="none"/>
+            <!-- 粉红眼影 -->
+            <ellipse cx="22" cy="76" rx="8" ry="3" fill="#FFB6C1" opacity="0.3"/>
+            <ellipse cx="38" cy="76" rx="8" ry="3" fill="#FFB6C1" opacity="0.3"/>
+            <!-- 鼻子 -->
+            <ellipse cx="30" cy="80" rx="3" ry="2.5" fill="#FF69B4"/>
+            <!-- 微笑 -->
+            <path d="M 24 86 Q 30 92 36 86" stroke="#333" stroke-width="2" fill="none"/>
+            <!-- 耳朵 -->
+            <ellipse cx="10" cy="63" rx="8" ry="11" fill="#DEB887"/>
+            <ellipse cx="10" cy="63" rx="5" ry="7" fill="#FFB6C1" opacity="0.4"/>
+            <ellipse cx="50" cy="63" rx="8" ry="11" fill="#DEB887"/>
+            <ellipse cx="50" cy="63" rx="5" ry="7" fill="#FFB6C1" opacity="0.4"/>
+            <!-- 手 -->
+            <ellipse cx="6" cy="93" rx="9" ry="7" fill="#DEB887"/>
+            <ellipse cx="54" cy="98" rx="9" ry="7" fill="#DEB887"/>
+            <!-- 脚 -->
+            <ellipse cx="33" cy="112" rx="10" ry="5" fill="#DEB887"/>
+            <ellipse cx="53" cy="112" rx="10" ry="5" fill="#DEB887"/>
+          </svg>
+        </div>
+
+        <!-- 飞行的雪球 -->
+        <div class="snowball male-throw"></div>
+        <div class="snowball female-throw"></div>
+
+        <!-- 击中特效 -->
+        <div class="hit-effect male-hit">💥😵</div>
+        <div class="hit-effect female-hit">💥😵</div>
+      </div>
+
       <div class="stats">
         <div class="stat-item">
           <div class="stat-value">6</div>
@@ -676,16 +931,6 @@
     </section>
   </div>
 
-  <!-- 底部草地和小刺猬 -->
-  <div class="hedgehog-ground">
-    <div class="grass" id="grass"></div>
-    <div class="hedgehog h1">🦔</div>
-    <div class="hedgehog h2">🦔</div>
-    <div class="hedgehog h3">🦔</div>
-    <div class="hedgehog h4">🦔</div>
-    <div class="hedgehog h5">🦔</div>
-  </div>
-
   <!-- 页脚 -->
   <footer id="about">
     <p>Made with ❤️ by <a href="https://github.com/jzyztzn" target="_blank">@jzyztzn</a></p>
@@ -695,24 +940,13 @@
   <script>
     // 创建背景粒子
     const particlesContainer = document.getElementById('particles');
-    for (let i = 0; i < 50; i++) {
+    for (let i = 0; i < 30; i++) {
       const particle = document.createElement('div');
       particle.className = 'particle';
       particle.style.left = Math.random() * 100 + '%';
       particle.style.animationDelay = Math.random() * 15 + 's';
       particle.style.animationDuration = (15 + Math.random() * 10) + 's';
       particlesContainer.appendChild(particle);
-    }
-
-    // 创建草地
-    const grassContainer = document.getElementById('grass');
-    for (let i = 0; i < 100; i++) {
-      const blade = document.createElement('div');
-      blade.className = 'grass-blade';
-      blade.style.left = i + '%';
-      blade.style.height = (15 + Math.random() * 15) + 'px';
-      blade.style.animationDelay = Math.random() * 2 + 's';
-      grassContainer.appendChild(blade);
     }
 
     // 冲刺特效
@@ -745,7 +979,6 @@
         star.style.left = x + 'px';
         star.style.top = y + 'px';
         star.style.animationDelay = Math.random() * 0.3 + 's';
-        star.style.setProperty('--angle', (i * 30) + 'deg');
         container.appendChild(star);
         
         setTimeout(() => star.remove(), 1300);
@@ -783,18 +1016,6 @@
         window.location.href = url;
       }, 800);
     }
-
-    // 鼠标移动时底部小刺猬看向鼠标
-    document.addEventListener('mousemove', (e) => {
-      if (e.clientY > window.innerHeight - 150) {
-        document.querySelectorAll('.hedgehog').forEach(h => {
-          const hedgehogX = h.getBoundingClientRect().left + 20;
-          const diff = e.clientX - hedgehogX;
-          const angle = diff > 0 ? 5 : -5;
-          h.style.transform = `translateY(0) rotate(${angle}deg)`;
-        });
-      }
-    });
   </script>
 </body>
 </html>
