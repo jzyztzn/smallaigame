@@ -180,6 +180,7 @@
       background: #667eea;
       border-color: #667eea;
       transform: scale(1.05);
+      box-shadow: 0 2px 10px rgba(102, 126, 234, 0.4);
     }
 
     .num-btn:active:not(.disabled) {
@@ -189,6 +190,14 @@
     .num-btn.disabled {
       opacity: 0.25;
       cursor: not-allowed;
+      background: rgba(255,255,255,0.05);
+      border-color: rgba(255,255,255,0.1);
+      color: rgba(255,255,255,0.25);
+      transform: none;
+    }
+
+    .num-btn.disabled:hover {
+      transform: none;
     }
 
     .num-btn.selected {
@@ -484,12 +493,33 @@
       }).join('');
     }
 
-    // 检查数字是否禁用
+    // 检查数字是否禁用（超出范围或已猜过）
     function isNumberDisabled(num) {
       if (state.gameOver) return true;
+
+      // 检查是否已猜过
       for (const item of state.history) {
         if (item.number === num) return true;
       }
+
+      // 计算当前有效范围
+      let currentMin = config.min;
+      let currentMax = config.max;
+
+      for (const item of state.history) {
+        if (item.type === 'high' && item.number <= currentMax) {
+          currentMax = item.number - 1;
+        }
+        if (item.type === 'low' && item.number >= currentMin) {
+          currentMin = item.number + 1;
+        }
+      }
+
+      // 如果数字不在有效范围内，禁用
+      if (num < currentMin || num > currentMax) {
+        return true;
+      }
+
       return false;
     }
 
