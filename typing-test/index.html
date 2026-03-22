@@ -92,7 +92,7 @@
       background: rgba(255,255,255,0.05);
       border-radius: var(--radius-xl);
       padding: 25px;
-      margin-bottom: 20px;
+      margin-bottom: 15px;
       border: 1px solid rgba(255,255,255,0.1);
     }
 
@@ -102,6 +102,7 @@
       text-align: left;
       letter-spacing: 0.5px;
       word-break: break-word;
+      font-family: 'Courier New', monospace;
     }
 
     .text-display .char {
@@ -133,6 +134,45 @@
 
     .text-display .char.upcoming {
       color: rgba(255,255,255,0.35);
+    }
+
+    /* 用户输入显示区 */
+    .typed-area {
+      background: rgba(0,0,0,0.2);
+      border-radius: var(--radius-md);
+      padding: 15px 20px;
+      margin-bottom: 15px;
+      min-height: 60px;
+      text-align: left;
+    }
+
+    .typed-label {
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.4);
+      margin-bottom: 8px;
+    }
+
+    .typed-text {
+      font-size: 1.2rem;
+      line-height: 1.6;
+      color: #4ecdc4;
+      font-family: 'Courier New', monospace;
+      word-break: break-all;
+      min-height: 30px;
+    }
+
+    .typed-text .correct {
+      color: #4ecdc4;
+    }
+
+    .typed-text .wrong {
+      color: #f5576c;
+      text-decoration: line-through;
+    }
+
+    .typed-placeholder {
+      color: rgba(255,255,255,0.3);
+      font-style: italic;
     }
 
     /* 输入区 */
@@ -286,6 +326,14 @@
       <div class="text-display" id="textDisplay"></div>
     </div>
 
+    <!-- 用户输入显示 -->
+    <div class="typed-area">
+      <div class="typed-label">你输入的内容：</div>
+      <div class="typed-text" id="typedText">
+        <span class="typed-placeholder">开始输入后这里会显示...</span>
+      </div>
+    </div>
+
     <div class="input-area">
       <input type="text" id="typingInput" placeholder="点击「开始测试」后在此输入..." autocomplete="off" disabled>
     </div>
@@ -314,13 +362,13 @@
     </div>
 
     <div class="tip">
-      💡 提示：使用英文文本测试更准确，每个字符都会被计数
+      💡 提示：使用英文文本测试更准确，每个字符都会被计数。正确字符显示绿色，错误显示红色
     </div>
   </div>
 
   <script src="../shared/lib.js"></script>
   <script>
-    // 英文文本库（更容易准确计算字符数）
+    // 英文文本库
     const texts = [
       "The quick brown fox jumps over the lazy dog. This pangram contains every letter of the alphabet at least once.",
       "Programming is the art of telling a computer what to do. Good code is like a good joke, it needs no explanation.",
@@ -342,12 +390,14 @@
       timerInterval: null,
       timeLeft: 60,
       gameActive: false,
-      textLength: 0
+      textLength: 0,
+      typedHistory: [] // 记录每次输入及其正确性
     };
 
     // DOM元素
     const typingInput = document.getElementById('typingInput');
     const textDisplay = document.getElementById('textDisplay');
+    const typedText = document.getElementById('typedText');
     const timerEl = document.getElementById('timer');
     const wpmEl = document.getElementById('wpm');
     const accuracyEl = document.getElementById('accuracy');
@@ -362,11 +412,13 @@
       state.correctCount = 0;
       state.totalTyped = 0;
       state.textLength = state.targetText.length;
+      state.typedHistory = [];
       renderText();
+      renderTypedText();
       updateStats();
     }
 
-    // 渲染文本
+    // 渲染目标文本
     function renderText() {
       let html = '';
       for (let i = 0; i < state.targetText.length; i++) {
@@ -378,11 +430,31 @@
         } else {
           className += ' upcoming';
         }
-        // 转义HTML特殊字符
-        const char = state.targetText[i] === ' ' ? '&nbsp;' : state.targetText[i];
+        const char = state.targetText[i] === ' ' ? '&nbsp;' : escapeHtml(state.targetText[i]);
         html += `<span class="${className}">${char}</span>`;
       }
       textDisplay.innerHTML = html;
+    }
+
+    // 渲染用户输入的文本
+    function renderTypedText() {
+      if (state.typedHistory.length === 0) {
+        typedText.innerHTML = '<span class="typed-placeholder">开始输入后这里会显示...</span>';
+        return;
+      }
+
+      typedText.innerHTML = state.typedHistory.map(item => {
+        const displayChar = item.char === ' ' ? '&nbsp;' : escapeHtml(item.char);
+        const className = item.correct ? 'correct' : 'wrong';
+        return `<span class="${className}">${displayChar}</span>`;
+      }).join('');
+    }
+
+    // HTML转义
+    function escapeHtml(char) {
+      const div = document.createElement('div');
+      div.textContent = char;
+      return div.innerHTML;
     }
 
     // 更新统计
@@ -393,8 +465,8 @@
       progressEl.textContent = progress + '%';
 
       if (state.startTime && state.currentIndex > 0) {
-        const elapsed = (Date.now() - state.startTime) / 1000 / 60; // 分钟
-        const wpm = Math.round((state.correctCount / 5) / elapsed); // 标准WPM计算
+        const elapsed = (Date.now() - state.startTime) / 1000 / 60;
+        const wpm = Math.round((state.correctCount / 5) / elapsed);
         wpmEl.textContent = Math.min(wpm, 999);
       }
 
@@ -443,7 +515,7 @@
       startBtn.disabled = false;
       timerEl.classList.remove('warning');
 
-      const elapsed = 60 / 60; // 一分钟
+      const elapsed = 60 / 60;
       const wpm = Math.round((state.correctCount / 5) / elapsed);
       const accuracy = state.totalTyped > 0
         ? Math.round((state.correctCount / state.totalTyped) * 100)
@@ -469,6 +541,7 @@
       state.totalTyped = 0;
       state.startTime = null;
       state.timeLeft = 60;
+      state.typedHistory = [];
 
       timerEl.textContent = '60';
       timerEl.classList.remove('warning');
@@ -484,51 +557,52 @@
       initGame();
     }
 
-    // 输入处理（关键逻辑）
+    // 输入处理
     typingInput.addEventListener('input', (e) => {
       if (!state.gameActive) return;
 
       const typed = e.target.value;
 
-      // 只处理最后一个字符
       if (typed.length === 0) return;
 
       const lastTyped = typed[typed.length - 1];
       const expected = state.targetText[state.currentIndex];
 
-      // 清空输入框（所见即所得模式）
+      // 清空输入框
       typingInput.value = '';
 
-      // 检查是否正确
-      if (lastTyped === expected) {
+      // 记录输入
+      const isCorrect = lastTyped === expected;
+      state.typedHistory.push({ char: lastTyped, correct: isCorrect });
+
+      if (isCorrect) {
         state.correctCount++;
         state.currentIndex++;
 
-        // 检查是否完成
         if (state.currentIndex >= state.targetText.length) {
           renderText();
+          renderTypedText();
           updateStats();
           endGame();
           return;
         }
       } else {
-        // 错误输入
         state.totalTyped++;
         state.currentIndex++;
 
-        // 检查是否完成
         if (state.currentIndex >= state.targetText.length) {
           renderText();
+          renderTypedText();
           updateStats();
           endGame();
           return;
         }
       }
 
-      // 更新总输入数（正确和错误都计入）
       state.totalTyped++;
 
       renderText();
+      renderTypedText();
       updateStats();
     });
 

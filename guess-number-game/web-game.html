@@ -96,46 +96,81 @@
       font-weight: 700;
     }
 
-    .range-values .min {
-      color: #4ecdc4;
-    }
-
-    .range-values .max {
-      color: #f5576c;
-    }
-
+    .range-values .min { color: #4ecdc4; }
+    .range-values .max { color: #f5576c; }
     .range-values .arrow {
       color: rgba(255,255,255,0.4);
       margin: 0 15px;
     }
 
-    /* 猜测范围 */
-    .guess-section {
+    /* 键盘输入区 */
+    .input-section {
       margin-bottom: 20px;
     }
 
-    .guess-label {
+    .input-section label {
+      display: block;
       font-size: 0.9rem;
       color: rgba(255,255,255,0.6);
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
 
-    /* 数字网格 - 动态范围 */
+    .input-group {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+    }
+
+    #guessInput {
+      width: 150px;
+      padding: 14px 20px;
+      font-size: 1.3rem;
+      font-weight: 700;
+      background: rgba(255,255,255,0.1);
+      border: 3px solid rgba(255,255,255,0.2);
+      border-radius: var(--radius-md);
+      color: #fff;
+      text-align: center;
+      outline: none;
+      transition: all 0.3s;
+    }
+
+    #guessInput:focus {
+      border-color: #667eea;
+      box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.2);
+    }
+
+    #guessInput::placeholder {
+      color: rgba(255,255,255,0.3);
+      font-weight: 400;
+    }
+
+    /* 按钮网格 - 作为辅助 */
+    .quick-btns {
+      margin-bottom: 20px;
+    }
+
+    .quick-btns label {
+      display: block;
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.5);
+      margin-bottom: 10px;
+    }
+
     .number-grid {
       display: grid;
       grid-template-columns: repeat(10, 1fr);
       gap: 6px;
-      margin-bottom: 15px;
     }
 
     .num-btn {
       aspect-ratio: 1;
-      min-width: 40px;
+      min-width: 35px;
       background: rgba(255,255,255,0.1);
       border: 2px solid rgba(255,255,255,0.2);
       border-radius: var(--radius-sm);
       color: #fff;
-      font-size: 1rem;
+      font-size: 0.9rem;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.2s;
@@ -152,40 +187,13 @@
     }
 
     .num-btn.disabled {
-      opacity: 0.3;
+      opacity: 0.25;
       cursor: not-allowed;
     }
 
     .num-btn.selected {
       background: #4ecdc4;
       border-color: #4ecdc4;
-    }
-
-    /* 进度条 */
-    .progress-section {
-      margin: 15px 0;
-    }
-
-    .progress-info {
-      display: flex;
-      justify-content: space-between;
-      font-size: 0.85rem;
-      color: rgba(255,255,255,0.5);
-      margin-bottom: 5px;
-    }
-
-    .progress-bar {
-      height: 8px;
-      background: rgba(255,255,255,0.1);
-      border-radius: 4px;
-      overflow: hidden;
-    }
-
-    .progress-fill {
-      height: 100%;
-      background: linear-gradient(90deg, #667eea, #764ba2);
-      border-radius: 4px;
-      transition: width 0.3s ease;
     }
 
     /* 历史记录 */
@@ -253,21 +261,21 @@
       color: rgba(255,255,255,0.7);
     }
 
-    /* 操作按钮 */
-    .action-btns {
-      display: flex;
-      gap: 10px;
-      justify-content: center;
-      margin-top: 15px;
+    /* 设置面板 */
+    .settings-section {
+      margin-top: 25px;
+      padding-top: 20px;
+      border-top: 1px dashed rgba(255,255,255,0.1);
     }
 
-    /* 设置面板 */
     .settings-toggle {
-      margin-top: 20px;
       color: rgba(255,255,255,0.5);
       cursor: pointer;
       font-size: 0.9rem;
       transition: color 0.3s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
     }
 
     .settings-toggle:hover {
@@ -307,26 +315,20 @@
       border-radius: var(--radius-sm);
       color: #fff;
       text-align: center;
+      font-size: 0.95rem;
     }
 
     @media (max-width: 500px) {
       .number-grid {
         grid-template-columns: repeat(8, 1fr);
       }
-
       .num-btn {
-        min-width: 35px;
-        font-size: 0.85rem;
+        min-width: 30px;
+        font-size: 0.8rem;
       }
-
-      .stats-bar {
-        gap: 10px;
-      }
-
-      .stat {
-        padding: 10px 12px;
-        min-width: 75px;
-      }
+      .stats-bar { gap: 10px; }
+      .stat { padding: 10px 12px; min-width: 75px; }
+      #guessInput { width: 120px; font-size: 1.1rem; }
     }
   </style>
 </head>
@@ -340,7 +342,7 @@
 
   <div class="container">
     <h1>🎯 猜数字</h1>
-    <p class="subtitle">小刺猬想了一个数字，点击按钮来猜吧！</p>
+    <p class="subtitle">小刺猬想了一个数字，快来猜猜看！</p>
 
     <div class="stats-bar">
       <div class="stat">
@@ -367,19 +369,19 @@
         </div>
       </div>
 
-      <div class="guess-section">
-        <p class="guess-label">点击数字进行猜测：</p>
-        <div class="number-grid" id="numberGrid"></div>
+      <!-- 键盘输入区 -->
+      <div class="input-section">
+        <label>输入你的猜测：</label>
+        <div class="input-group">
+          <input type="number" id="guessInput" placeholder="1-100" min="1" max="100" autofocus>
+          <button class="hg-btn hg-btn-primary" onclick="submitGuess()">猜测</button>
+        </div>
       </div>
 
-      <div class="progress-section">
-        <div class="progress-info">
-          <span>猜测进度</span>
-          <span id="progressText">0%</span>
-        </div>
-        <div class="progress-bar">
-          <div class="progress-fill" id="progressFill" style="width: 0%"></div>
-        </div>
+      <!-- 快速选择按钮 -->
+      <div class="quick-btns">
+        <label>或点击快速选择：</label>
+        <div class="number-grid" id="numberGrid"></div>
       </div>
 
       <div class="history-section">
@@ -391,31 +393,31 @@
 
       <div class="result-message" id="resultMessage"></div>
       <div class="hint-text" id="hintText"></div>
-
-      <div class="action-btns">
-        <button class="hg-btn hg-btn-secondary" onclick="restartGame()">🔄 重新开始</button>
-      </div>
     </div>
 
-    <div class="settings-toggle" onclick="toggleSettings()">
-      ⚙️ 游戏设置
-    </div>
-    <div class="settings-panel" id="settingsPanel">
-      <div class="settings-row">
-        <label>最小值：</label>
-        <input type="number" id="settingMin" value="1" min="1">
+    <!-- 设置 -->
+    <div class="settings-section">
+      <div class="settings-toggle" onclick="toggleSettings()">
+        <span>⚙️</span>
+        <span>游戏设置</span>
       </div>
-      <div class="settings-row">
-        <label>最大值：</label>
-        <input type="number" id="settingMax" value="100" min="2">
+      <div class="settings-panel" id="settingsPanel">
+        <div class="settings-row">
+          <label>最小值：</label>
+          <input type="number" id="settingMin" value="1" min="1">
+        </div>
+        <div class="settings-row">
+          <label>最大值：</label>
+          <input type="number" id="settingMax" value="100" min="2">
+        </div>
+        <div class="settings-row">
+          <label>尝试次数：</label>
+          <input type="number" id="settingAttempts" value="10" min="3" max="20">
+        </div>
+        <button class="hg-btn hg-btn-primary hg-w-full" onclick="applySettings()" style="margin-top: 10px;">
+          应用设置
+        </button>
       </div>
-      <div class="settings-row">
-        <label>尝试次数：</label>
-        <input type="number" id="settingAttempts" value="10" min="3">
-      </div>
-      <button class="hg-btn hg-btn-primary hg-w-full" onclick="applySettings()" style="margin-top: 10px;">
-        应用设置
-      </button>
     </div>
   </div>
 
@@ -438,32 +440,14 @@
       gameOver: false
     };
 
-    // 提示语库
+    // 提示语
     const hints = {
-      high: [
-        '太大了！往小一点试试~',
-        '高了高了，降温一下！',
-        '猜太大了，再小一点！',
-        '哎呀，这个数偏大~',
-        '太高啦，往下降降！'
-      ],
-      low: [
-        '太小了！往大一点试试~',
-        '低了低了，升温一下！',
-        '猜太小了，再大一点！',
-        '哎呀，这个数偏小~',
-        '太低啦，往上涨涨！'
-      ],
-      veryClose: [
-        '哇！太接近了！！',
-        '就差一点点！',
-        '近在咫尺啊！',
-        '超级接近了！',
-        '几乎猜到了呢！'
-      ]
+      high: ['太大了！往小一点~', '高了高了，降温一下！', '猜太大了，再小一点！'],
+      low: ['太小了！往大一点~', '低了低了，升温一下！', '猜太小了，再大一点！'],
+      veryClose: ['哇！太接近了！！', '就差一点点！', '近在咫尺啊！']
     };
 
-    // 初始化游戏
+    // 初始化
     function initGame() {
       state.target = HedgehogLib.utils.random(config.min, config.max);
       state.attemptsLeft = config.maxAttempts;
@@ -475,6 +459,12 @@
       updateUI();
       updateBestDisplay();
       clearResult();
+
+      document.getElementById('guessInput').min = config.min;
+      document.getElementById('guessInput').max = config.max;
+      document.getElementById('guessInput').placeholder = `${config.min}-${config.max}`;
+      document.getElementById('guessInput').value = '';
+      document.getElementById('guessInput').focus();
     }
 
     // 渲染数字网格
@@ -490,30 +480,20 @@
         const isDisabled = isNumberDisabled(num);
         return `<button class="num-btn ${isDisabled ? 'disabled' : ''}"
                         onclick="makeGuess(${num})"
-                        ${isDisabled ? 'disabled' : ''}>
-                  ${num}
-                </button>`;
+                        ${isDisabled ? 'disabled' : ''}>${num}</button>`;
       }).join('');
     }
 
-    // 检查数字是否应该被禁用
+    // 检查数字是否禁用
     function isNumberDisabled(num) {
       if (state.gameOver) return true;
-
       for (const item of state.history) {
         if (item.number === num) return true;
       }
-
-      // 如果数字超出当前范围也禁用
-      if (num < state.history.filter(h => h.type === 'low').reduce((max, h) => Math.max(max, h.number), config.min) ||
-          num > state.history.filter(h => h.type === 'high').reduce((min, h) => Math.min(min, h.number), config.max)) {
-        return true;
-      }
-
       return false;
     }
 
-    // 猜测
+    // 执行猜测
     function makeGuess(num) {
       if (state.gameOver) return;
       if (isNumberDisabled(num)) return;
@@ -521,7 +501,6 @@
       state.guessedCount++;
       state.attemptsLeft = config.maxAttempts - state.guessedCount;
 
-      const diff = Math.abs(num - state.target);
       let hint = '';
       let type = '';
 
@@ -533,31 +512,50 @@
         hint = HedgehogLib.utils.pick(hints.low);
       }
 
-      // 非常接近时添加特殊提示
+      const diff = Math.abs(num - state.target);
       if (diff <= 3 && num !== state.target) {
         hint = HedgehogLib.utils.pick(hints.veryClose) + ' ' + hint;
       }
 
       state.history.push({ number: num, type: type, diff: diff });
 
-      // 检查是否猜中
       if (num === state.target) {
         victory();
         return;
       }
 
-      // 检查是否用完次数
       if (state.attemptsLeft <= 0) {
         defeat();
         return;
       }
 
-      // 更新界面
       renderNumberGrid();
       updateUI();
       updateHistoryDisplay();
       showHint(hint);
     }
+
+    // 键盘提交
+    function submitGuess() {
+      const input = document.getElementById('guessInput');
+      const num = parseInt(input.value);
+
+      if (isNaN(num) || num < config.min || num > config.max) {
+        alert(`请输入 ${config.min} 到 ${config.max} 之间的数字！`);
+        return;
+      }
+
+      makeGuess(num);
+      input.value = '';
+      input.focus();
+    }
+
+    // 键盘事件
+    document.getElementById('guessInput').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        submitGuess();
+      }
+    });
 
     // 胜利
     function victory() {
@@ -570,11 +568,10 @@
         updateBestDisplay();
       }
 
-      showResult(`🎉 恭喜你！猜对了！\n只用了 ${state.guessedCount} 次就找到了！\n${isNewBest ? '🏆 新纪录！' : ''}`, 'success');
+      showResult(`🎉 恭喜你！只用了 ${state.guessedCount} 次就找到了！${isNewBest ? '🏆 新纪录！' : ''}`, 'success');
       HedgehogLib.effects.showConfetti();
       renderNumberGrid();
 
-      // 延迟重新开始
       setTimeout(() => {
         if (confirm(`太棒了！你用了 ${state.guessedCount} 次就猜到了！\n\n要再来一局吗？`)) {
           initGame();
@@ -585,8 +582,7 @@
     // 失败
     function defeat() {
       state.gameOver = true;
-
-      showResult(`😢 游戏结束！\n正确答案是 <strong>${state.target}</strong>\n下次再接再厉！`, 'error');
+      showResult(`😢 游戏结束！正确答案是 <strong>${state.target}</strong>`, 'error');
       renderNumberGrid();
 
       setTimeout(() => {
@@ -601,7 +597,6 @@
       document.getElementById('remaining').textContent = state.attemptsLeft;
       document.getElementById('guessed').textContent = state.guessedCount;
 
-      // 计算范围
       let currentMin = config.min;
       let currentMax = config.max;
 
@@ -616,39 +611,31 @@
 
       document.getElementById('minRange').textContent = currentMin;
       document.getElementById('maxRange').textContent = currentMax;
-
-      // 进度
-      const progress = Math.min(100, (state.guessedCount / config.maxAttempts) * 100);
-      document.getElementById('progressFill').style.width = progress + '%';
-      document.getElementById('progressText').textContent = Math.round(progress) + '%';
     }
 
-    // 更新历史显示
+    // 更新历史
     function updateHistoryDisplay() {
       const list = document.getElementById('historyList');
-
       if (state.history.length === 0) {
         list.innerHTML = '<span style="color: rgba(255,255,255,0.3);">还没有猜测...</span>';
         return;
       }
-
       list.innerHTML = state.history.map(item => {
         const icon = item.type === 'high' ? '⬆️' : '⬇️';
-        const cls = item.type === 'high' ? 'high' : 'low';
-        return `<span class="history-item ${cls}">${item.number} ${icon}</span>`;
+        return `<span class="history-item ${item.type}">${item.number} ${icon}</span>`;
       }).join('');
     }
 
-    // 更新最佳成绩显示
+    // 更新最佳
     function updateBestDisplay() {
       document.getElementById('best').textContent = state.bestScore !== null ? state.bestScore : '-';
     }
 
     // 显示提示
     function showHint(text) {
-      const hintEl = document.getElementById('hintText');
-      hintEl.textContent = '🦔 ' + text;
-      hintEl.style.display = 'block';
+      const el = document.getElementById('hintText');
+      el.textContent = '🦔 ' + text;
+      el.style.display = 'block';
     }
 
     // 显示结果
@@ -666,11 +653,6 @@
       updateHistoryDisplay();
     }
 
-    // 重新开始
-    function restartGame() {
-      initGame();
-    }
-
     // 切换设置
     function toggleSettings() {
       document.getElementById('settingsPanel').classList.toggle('show');
@@ -686,7 +668,6 @@
         alert('最小值必须小于最大值！');
         return;
       }
-
       if (newAttempts < 3 || newAttempts > 20) {
         alert('尝试次数必须在 3-20 之间！');
         return;
@@ -700,7 +681,7 @@
       initGame();
     }
 
-    // 初始化
+    // 启动
     initGame();
   </script>
 </body>
