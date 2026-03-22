@@ -188,16 +188,17 @@
     }
 
     .num-btn.disabled {
-      opacity: 0.25;
+      opacity: 0.35;
       cursor: not-allowed;
-      background: rgba(255,255,255,0.05);
-      border-color: rgba(255,255,255,0.1);
-      color: rgba(255,255,255,0.25);
+      background: rgba(0,0,0,0.4);
+      border-color: rgba(255,255,255,0.08);
+      color: rgba(255,255,255,0.2);
       transform: none;
     }
 
     .num-btn.disabled:hover {
       transform: none;
+      background: rgba(0,0,0,0.4);
     }
 
     .num-btn.selected {
@@ -476,9 +477,25 @@
       document.getElementById('guessInput').focus();
     }
 
+    // 计算当前有效范围（根据猜测历史）
+    function getCurrentRange() {
+      let currentMin = config.min;
+      let currentMax = config.max;
+      for (const item of state.history) {
+        if (item.type === 'high') {
+          currentMax = Math.min(currentMax, item.number - 1);
+        }
+        if (item.type === 'low') {
+          currentMin = Math.max(currentMin, item.number + 1);
+        }
+      }
+      return { min: currentMin, max: currentMax };
+    }
+
     // 渲染数字网格
     function renderNumberGrid() {
       const grid = document.getElementById('numberGrid');
+      const range = getCurrentRange();
       const numbers = [];
 
       for (let i = config.min; i <= config.max; i++) {
@@ -486,7 +503,7 @@
       }
 
       grid.innerHTML = numbers.map(num => {
-        const isDisabled = isNumberDisabled(num);
+        const isDisabled = isNumberDisabled(num, range);
         return `<button class="num-btn ${isDisabled ? 'disabled' : ''}"
                         onclick="makeGuess(${num})"
                         ${isDisabled ? 'disabled' : ''}>${num}</button>`;
@@ -494,31 +511,17 @@
     }
 
     // 检查数字是否禁用（超出范围或已猜过）
-    function isNumberDisabled(num) {
+    function isNumberDisabled(num, range) {
       if (state.gameOver) return true;
 
-      // 检查是否已猜过
-      for (const item of state.history) {
-        if (item.number === num) return true;
-      }
+      // 使用传入的 range 或重新计算
+      const r = range || getCurrentRange();
 
-      // 计算当前有效范围
-      let currentMin = config.min;
-      let currentMax = config.max;
+      // 已猜过的数字
+      if (state.history.some(item => item.number === num)) return true;
 
-      for (const item of state.history) {
-        if (item.type === 'high' && item.number <= currentMax) {
-          currentMax = item.number - 1;
-        }
-        if (item.type === 'low' && item.number >= currentMin) {
-          currentMin = item.number + 1;
-        }
-      }
-
-      // 如果数字不在有效范围内，禁用
-      if (num < currentMin || num > currentMax) {
-        return true;
-      }
+      // 不在有效范围内的数字（范围外的全部变灰）
+      if (num < r.min || num > r.max) return true;
 
       return false;
     }
@@ -575,6 +578,12 @@
         return;
       }
 
+      const range = getCurrentRange();
+      if (num < range.min || num > range.max) {
+        alert(`当前有效范围是 ${range.min} ~ ${range.max}，请在此范围内猜测！`);
+        return;
+      }
+
       makeGuess(num);
       input.value = '';
       input.focus();
@@ -627,20 +636,13 @@
       document.getElementById('remaining').textContent = state.attemptsLeft;
       document.getElementById('guessed').textContent = state.guessedCount;
 
-      let currentMin = config.min;
-      let currentMax = config.max;
-
-      for (const item of state.history) {
-        if (item.type === 'high' && item.number < currentMax) {
-          currentMax = item.number - 1;
-        }
-        if (item.type === 'low' && item.number > currentMin) {
-          currentMin = item.number + 1;
-        }
-      }
+      const { min: currentMin, max: currentMax } = getCurrentRange();
 
       document.getElementById('minRange').textContent = currentMin;
       document.getElementById('maxRange').textContent = currentMax;
+
+      // 输入框 placeholder 显示当前有效范围
+      document.getElementById('guessInput').placeholder = `${currentMin}-${currentMax}`;
     }
 
     // 更新历史
