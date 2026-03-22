@@ -5,56 +5,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>🦔 小小刺猬 - 趣味小游戏</title>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="shared/styles.css">
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    :root {
-      --primary: #667eea;
-      --secondary: #764ba2;
-      --accent: #f093fb;
-    }
-
     body {
       font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
       min-height: 100vh;
       background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
       color: #fff;
       overflow-x: hidden;
+      margin: 0;
+      padding: 0;
     }
 
-    /* 粒子背景 */
-    .particles {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      overflow: hidden;
-      z-index: 0;
-    }
-
-    .particle {
-      position: absolute;
-      width: 4px;
-      height: 4px;
-      background: rgba(255, 255, 255, 0.3);
-      border-radius: 50%;
-      animation: float 15s infinite;
-    }
-
-    @keyframes float {
-      0%, 100% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
-      10% { opacity: 1; }
-      90% { opacity: 1; }
-      100% { transform: translateY(-100vh) rotate(720deg); opacity: 0; }
-    }
-
-    /* 导航栏 */
+    /* ========== 导航栏 ========== */
     nav {
       position: fixed;
       top: 0;
@@ -82,10 +45,14 @@
       gap: 12px;
       font-size: 1.5rem;
       font-weight: 900;
-      background: linear-gradient(135deg, var(--accent), var(--primary));
+      background: linear-gradient(135deg, #f093fb, #667eea);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
+    }
+
+    .logo svg {
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
     }
 
     .nav-links {
@@ -113,7 +80,7 @@
       left: 0;
       width: 0;
       height: 2px;
-      background: linear-gradient(90deg, var(--primary), var(--accent));
+      background: linear-gradient(90deg, #667eea, #f093fb);
       transition: width 0.3s;
     }
 
@@ -121,67 +88,69 @@
       width: 100%;
     }
 
-    /* 主容器 */
+    /* ========== 主容器 ========== */
     .container {
       max-width: 1400px;
       margin: 0 auto;
-      padding: 120px 40px 150px;
+      padding: 100px 40px 60px;
       position: relative;
       z-index: 1;
     }
 
-    /* 英雄区 - 雪战场景 */
+    /* ========== 英雄区 ========== */
     .hero {
       text-align: center;
-      margin-bottom: 60px;
-      position: relative;
-      animation: fadeInUp 0.8s ease;
-    }
-
-    @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(30px); }
-      to { opacity: 1; transform: translateY(0); }
+      margin-bottom: 40px;
+      animation: hg-slide-up 0.8s ease;
     }
 
     .hero h1 {
-      font-size: 3.5rem;
+      font-size: 3rem;
       font-weight: 900;
-      margin-bottom: 20px;
-      background: linear-gradient(135deg, #fff 0%, var(--accent) 50%, var(--primary) 100%);
+      margin-bottom: 15px;
+      background: linear-gradient(135deg, #fff 0%, #f093fb 50%, #667eea 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
     }
 
     .hero p {
-      font-size: 1.2rem;
+      font-size: 1.1rem;
       color: rgba(255, 255, 255, 0.7);
-      max-width: 600px;
+      max-width: 500px;
       margin: 0 auto;
     }
 
-    /* 雪战场地 */
-    .snow battlefield {
+    /* ========== 雪战场地 - 融入背景 ========== */
+    .snow-container {
       position: relative;
       width: 100%;
-      max-width: 800px;
-      height: 300px;
-      margin: 40px auto;
-      background: linear-gradient(180deg, #87CEEB 0%, #E0F4FF 60%, #fff 100%);
+      max-width: 900px;
+      height: 220px;
+      margin: 30px auto;
+      background: linear-gradient(180deg, 
+        rgba(135, 206, 235, 0.3) 0%, 
+        rgba(200, 230, 255, 0.2) 50%,
+        rgba(255, 255, 255, 0.15) 100%);
       border-radius: 30px;
       overflow: hidden;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      box-shadow: inset 0 0 60px rgba(255, 255, 255, 0.1);
     }
 
-    .snowfield {
-      position: relative;
-      width: 100%;
-      height: 300px;
-      margin: 40px auto;
-      max-width: 800px;
-      border-radius: 30px;
-      overflow: hidden;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    /* 飘落的雪花 */
+    .snowflake {
+      position: absolute;
+      color: #fff;
+      opacity: 0.8;
+      animation: snowfall linear infinite;
+      text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+    }
+
+    @keyframes snowfall {
+      0% { transform: translateY(-20px) rotate(0deg); opacity: 0; }
+      10% { opacity: 0.8; }
+      90% { opacity: 0.8; }
+      100% { transform: translateY(240px) rotate(360deg); opacity: 0; }
     }
 
     /* 雪地 */
@@ -190,152 +159,148 @@
       bottom: 0;
       left: 0;
       right: 0;
-      height: 100px;
-      background: linear-gradient(180deg, #E8F4F8 0%, #fff 100%);
+      height: 80px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.15) 100%);
+      border-radius: 50% 50% 0 0 / 30px 30px 0 0;
     }
 
-    /* 飘落的雪花 */
-    .snowflake {
+    .snow-ground::before {
+      content: '';
       position: absolute;
-      color: #fff;
-      font-size: 1rem;
-      animation: snowfall linear infinite;
-      opacity: 0.8;
-      text-shadow: 0 0 5px rgba(255,255,255,0.8);
+      top: -15px;
+      left: 0;
+      right: 0;
+      height: 30px;
+      background: radial-gradient(ellipse 60px 30px at 30% 100%, rgba(255,255,255,0.4) 0%, transparent 70%),
+                  radial-gradient(ellipse 80px 35px at 70% 100%, rgba(255,255,255,0.35) 0%, transparent 70%);
     }
 
-    @keyframes snowfall {
-      0% { transform: translateY(-20px) rotate(0deg); opacity: 0; }
-      10% { opacity: 0.8; }
-      90% { opacity: 0.8; }
-      100% { transform: translateY(320px) rotate(360deg); opacity: 0; }
-    }
-
-    /* 雪堆 */
+    /* 小雪堆 */
     .snow-mound {
       position: absolute;
-      bottom: 60px;
-      width: 120px;
-      height: 50px;
-      background: #fff;
+      bottom: 50px;
+      background: rgba(255, 255, 255, 0.3);
       border-radius: 50% 50% 0 0;
-      box-shadow: inset 0 -10px 20px rgba(200,220,230,0.5);
     }
 
-    .snow-mound.left { left: 50px; }
-    .snow-mound.right { right: 50px; }
+    .snow-mound-1 { left: 5%; width: 100px; height: 35px; }
+    .snow-mound-2 { right: 8%; width: 120px; height: 40px; }
+    .snow-mound-3 { left: 40%; width: 80px; height: 30px; bottom: 45px; }
 
-    /* 卡通小刺猬 - 男 */
+    /* ========== 可爱卡通刺猬 ========== */
+    .hedgehog-container {
+      position: absolute;
+      bottom: 55px;
+      width: 90px;
+      height: 110px;
+    }
+
     .hedgehog-male {
-      position: absolute;
-      bottom: 85px;
-      left: 80px;
-      width: 100px;
-      height: 120px;
-      animation: hedgehogThrowLeft 4s ease-in-out infinite;
-      transform-origin: center bottom;
+      left: 60px;
+      animation: hedgehog-hop 2s ease-in-out infinite;
     }
 
-    @keyframes hedgehogThrowLeft {
-      0%, 100% { transform: translateY(0) rotate(0deg); }
-      15% { transform: translateY(-20px) rotate(-5deg); }
-      30% { transform: translateY(0) rotate(15deg); }
-      50% { transform: translateY(-10px) rotate(10deg); }
-      70% { transform: translateY(0) rotate(0deg); }
-    }
-
-    /* 卡通小刺猬 - 女 */
     .hedgehog-female {
-      position: absolute;
-      bottom: 85px;
-      right: 80px;
-      width: 100px;
-      height: 120px;
-      animation: hedgehogThrowRight 4s ease-in-out infinite;
+      right: 60px;
+      animation: hedgehog-hop 2s ease-in-out infinite;
+      animation-delay: 1s;
+    }
+
+    @keyframes hedgehog-hop {
+      0%, 100% { transform: translateY(0) scaleY(1); }
+      30% { transform: translateY(-20px) scaleY(1.05); }
+      50% { transform: translateY(0) scaleY(0.95); }
+      70% { transform: translateY(-12px) scaleY(1.02); }
+    }
+
+    /* 投掷雪球 */
+    .hedgehog-male .snowball-arm {
+      animation: throw-left 4s ease-in-out infinite;
+      transform-origin: 70% 50%;
+    }
+
+    .hedgehog-female .snowball-arm {
+      animation: throw-right 4s ease-in-out infinite;
       animation-delay: 2s;
-      transform-origin: center bottom;
+      transform-origin: 30% 50%;
     }
 
-    @keyframes hedgehogThrowRight {
-      0%, 100% { transform: translateY(0) rotate(0deg) scaleX(-1); }
-      15% { transform: translateY(-20px) rotate(-5deg) scaleX(-1); }
-      30% { transform: translateY(0) rotate(-15deg) scaleX(-1); }
-      50% { transform: translateY(-10px) rotate(-10deg) scaleX(-1); }
-      70% { transform: translateY(0) rotate(0deg) scaleX(-1); }
+    @keyframes throw-left {
+      0%, 25% { transform: rotate(0); }
+      35% { transform: rotate(-60deg); }
+      50%, 100% { transform: rotate(0); }
     }
 
-    /* 刺猬身体 SVG */
-    .hedgehog-body {
-      position: relative;
-      width: 100%;
-      height: 100%;
+    @keyframes throw-right {
+      0%, 25% { transform: rotate(0) scaleX(-1); }
+      35% { transform: rotate(-60deg) scaleX(-1); }
+      50%, 100% { transform: rotate(0) scaleX(-1); }
     }
 
-    /* 飞行的雪球 */
-    .snowball {
+    /* 飞行雪球 */
+    .snowball-projectile {
       position: absolute;
-      width: 20px;
-      height: 20px;
+      width: 16px;
+      height: 16px;
       background: radial-gradient(circle at 30% 30%, #fff, #cce5ff);
       border-radius: 50%;
-      box-shadow: 0 0 10px rgba(255,255,255,0.8);
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+      opacity: 0;
     }
 
-    .snowball.male-throw {
-      left: 120px;
-      bottom: 130px;
-      animation: snowballFlyRight 4s ease-in-out infinite;
+    .snowball-1 {
+      left: 130px;
+      bottom: 90px;
+      animation: fly-snowball-1 4s ease-in-out infinite;
     }
 
-    @keyframes snowballFlyRight {
-      0%, 15% { transform: translate(0, 0) scale(0); opacity: 0; }
-      20% { transform: translate(50px, -30px) scale(1); opacity: 1; }
-      40% { transform: translate(250px, -50px) scale(0.8); opacity: 1; }
-      50%, 100% { transform: translate(400px, 0) scale(0); opacity: 0; }
-    }
-
-    .snowball.female-throw {
-      right: 120px;
-      bottom: 130px;
-      animation: snowballFlyLeft 4s ease-in-out infinite;
+    .snowball-2 {
+      right: 130px;
+      bottom: 90px;
+      animation: fly-snowball-2 4s ease-in-out infinite;
       animation-delay: 2s;
     }
 
-    @keyframes snowballFlyLeft {
-      0%, 15% { transform: translate(0, 0) scale(0); opacity: 0; }
-      20% { transform: translate(-50px, -30px) scale(1); opacity: 1; }
-      40% { transform: translate(-250px, -50px) scale(0.8); opacity: 1; }
-      50%, 100% { transform: translate(-400px, 0) scale(0); opacity: 0; }
+    @keyframes fly-snowball-1 {
+      0%, 30% { transform: translate(0, 0) scale(0); opacity: 0; }
+      35% { transform: translate(20px, -30px) scale(1); opacity: 1; }
+      50% { transform: translate(280px, -60px) scale(0.7); opacity: 1; }
+      55%, 100% { transform: translate(300px, 0) scale(0); opacity: 0; }
+    }
+
+    @keyframes fly-snowball-2 {
+      0%, 30% { transform: translate(0, 0) scale(0); opacity: 0; }
+      35% { transform: translate(-20px, -30px) scale(1); opacity: 1; }
+      50% { transform: translate(-280px, -60px) scale(0.7); opacity: 1; }
+      55%, 100% { transform: translate(-300px, 0) scale(0); opacity: 0; }
     }
 
     /* 击中特效 */
     .hit-effect {
       position: absolute;
-      font-size: 2rem;
+      font-size: 1.5rem;
       opacity: 0;
     }
 
-    .hit-effect.male-hit {
-      right: 100px;
-      top: 80px;
-      animation: hitShake 4s ease-in-out infinite;
+    .hit-1 {
+      right: 80px;
+      top: 60px;
+      animation: hit-show 4s ease-in-out infinite;
     }
 
-    .hit-effect.female-hit {
-      left: 100px;
-      top: 80px;
-      animation: hitShake 4s ease-in-out infinite;
+    .hit-2 {
+      left: 80px;
+      top: 60px;
+      animation: hit-show 4s ease-in-out infinite;
       animation-delay: 2s;
     }
 
-    @keyframes hitShake {
-      0%, 35% { opacity: 0; transform: scale(0); }
-      40% { opacity: 1; transform: scale(1.2); }
-      45% { transform: scale(1) translateX(-5px); }
-      50% { transform: scale(1.1) translateX(5px); }
-      55% { transform: scale(1) translateX(-5px); }
-      60% { opacity: 0; transform: scale(1); }
-      100% { opacity: 0; }
+    @keyframes hit-show {
+      0%, 45% { opacity: 0; transform: scale(0); }
+      50% { opacity: 1; transform: scale(1.2); }
+      55% { transform: scale(0.9); }
+      60% { transform: scale(1.1); }
+      65%, 100% { opacity: 0; transform: scale(1); }
     }
 
     /* 雪球轨迹 */
@@ -343,15 +308,16 @@
       position: absolute;
       width: 6px;
       height: 6px;
-      background: rgba(255,255,255,0.6);
+      background: rgba(255, 255, 255, 0.5);
       border-radius: 50%;
     }
 
+    /* ========== 数据统计 ========== */
     .stats {
       display: flex;
       justify-content: center;
       gap: 50px;
-      margin-top: 40px;
+      margin-top: 30px;
     }
 
     .stat-item {
@@ -359,9 +325,9 @@
     }
 
     .stat-value {
-      font-size: 2.5rem;
+      font-size: 2.2rem;
       font-weight: 900;
-      background: linear-gradient(135deg, var(--primary), var(--accent));
+      background: linear-gradient(135deg, #667eea, #f093fb);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
@@ -373,24 +339,40 @@
       margin-top: 5px;
     }
 
-    /* 游戏网格 */
+    /* ========== 游戏网格 ========== */
+    .section-title {
+      font-size: 1.8rem;
+      font-weight: 700;
+      text-align: center;
+      margin: 50px 0 30px;
+      color: #fff;
+    }
+
+    .section-title span {
+      background: linear-gradient(135deg, #667eea, #f093fb);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
     .games-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-      gap: 30px;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 25px;
     }
 
     /* 游戏卡片 */
     .game-card {
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 24px;
-      padding: 30px;
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 25px;
       border: 1px solid rgba(255, 255, 255, 0.1);
       transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       cursor: pointer;
       position: relative;
       overflow: hidden;
-      animation: fadeInUp 0.8s ease backwards;
+      animation: hg-slide-up 0.6s ease backwards;
     }
 
     .game-card:nth-child(1) { animation-delay: 0.1s; }
@@ -406,8 +388,8 @@
       top: 0;
       left: 0;
       right: 0;
-      height: 4px;
-      background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
+      height: 3px;
+      background: linear-gradient(90deg, #667eea, #764ba2, #f093fb);
       transform: scaleX(0);
       transition: transform 0.4s;
     }
@@ -417,86 +399,79 @@
     }
 
     .game-card:hover {
-      transform: translateY(-10px) scale(1.02);
-      background: rgba(255, 255, 255, 0.1);
+      transform: translateY(-8px);
+      background: rgba(255, 255, 255, 0.12);
       border-color: rgba(255, 255, 255, 0.2);
-      box-shadow: 0 20px 60px rgba(102, 126, 234, 0.3);
+      box-shadow: 0 20px 50px rgba(102, 126, 234, 0.25);
     }
 
-    .game-card.clicked {
-      animation: cardClick 0.5s ease;
-    }
-
-    @keyframes cardClick {
-      0% { transform: scale(1); }
-      50% { transform: scale(0.95); }
-      100% { transform: scale(1); }
+    .game-card:active {
+      transform: scale(0.98);
     }
 
     .game-icon {
-      width: 80px;
-      height: 80px;
-      border-radius: 20px;
+      width: 70px;
+      height: 70px;
+      border-radius: 18px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 2.5rem;
-      margin-bottom: 20px;
-      position: relative;
-      animation: iconFloat 3s ease-in-out infinite;
+      font-size: 2.2rem;
+      margin-bottom: 18px;
+      animation: icon-bounce 3s ease-in-out infinite;
     }
 
-    .game-card:nth-child(1) .game-icon { background: linear-gradient(135deg, #667eea, #764ba2); animation-delay: 0s; }
-    .game-card:nth-child(2) .game-icon { background: linear-gradient(135deg, #f093fb, #f5576c); animation-delay: 0.5s; }
-    .game-card:nth-child(3) .game-icon { background: linear-gradient(135deg, #4ecdc4, #44a08d); animation-delay: 1s; }
-    .game-card:nth-child(4) .game-icon { background: linear-gradient(135deg, #ffeaa7, #fdcb6e); animation-delay: 1.5s; }
-    .game-card:nth-child(5) .game-icon { background: linear-gradient(135deg, #74b9ff, #0984e3); animation-delay: 2s; }
-    .game-card:nth-child(6) .game-icon { background: linear-gradient(135deg, #a29bfe, #6c5ce7); animation-delay: 2.5s; }
+    .game-card:nth-child(1) .game-icon { background: linear-gradient(135deg, #667eea, #764ba2); }
+    .game-card:nth-child(2) .game-icon { background: linear-gradient(135deg, #f093fb, #f5576c); }
+    .game-card:nth-child(3) .game-icon { background: linear-gradient(135deg, #4ecdc4, #44a08d); }
+    .game-card:nth-child(4) .game-icon { background: linear-gradient(135deg, #ffeaa7, #fdcb6e); }
+    .game-card:nth-child(5) .game-icon { background: linear-gradient(135deg, #74b9ff, #0984e3); }
+    .game-card:nth-child(6) .game-icon { background: linear-gradient(135deg, #a29bfe, #6c5ce7); }
 
-    @keyframes iconFloat {
+    @keyframes icon-bounce {
       0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-5px); }
+      50% { transform: translateY(-4px); }
     }
 
     .game-title {
-      font-size: 1.5rem;
+      font-size: 1.3rem;
       font-weight: 700;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
       color: #fff;
     }
 
     .game-desc {
-      font-size: 0.95rem;
+      font-size: 0.9rem;
       color: rgba(255, 255, 255, 0.6);
-      line-height: 1.6;
-      margin-bottom: 20px;
+      line-height: 1.5;
+      margin-bottom: 15px;
     }
 
     .game-tags {
       display: flex;
       flex-wrap: wrap;
-      gap: 8px;
+      gap: 6px;
     }
 
     .tag {
-      padding: 5px 12px;
+      padding: 4px 10px;
       background: rgba(255, 255, 255, 0.1);
-      border-radius: 20px;
-      font-size: 0.8rem;
+      border-radius: 15px;
+      font-size: 0.75rem;
       color: rgba(255, 255, 255, 0.7);
     }
 
     .play-btn {
       position: absolute;
-      bottom: 30px;
-      right: 30px;
-      width: 50px;
-      height: 50px;
+      bottom: 20px;
+      right: 20px;
+      width: 45px;
+      height: 45px;
       border-radius: 50%;
-      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      background: linear-gradient(135deg, #667eea, #764ba2);
       border: none;
       color: #fff;
-      font-size: 1.2rem;
+      font-size: 1rem;
       cursor: pointer;
       display: flex;
       align-items: center;
@@ -507,197 +482,70 @@
 
     .play-btn:hover {
       transform: scale(1.1) rotate(10deg);
-      box-shadow: 0 6px 25px rgba(102, 126, 234, 0.6);
     }
 
-    /* 冲刺特效 */
-    .speed-lines {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: 200;
-      opacity: 0;
-    }
-
-    .speed-lines.active {
-      animation: speedFlash 0.5s ease;
-    }
-
-    @keyframes speedFlash {
-      0% { opacity: 0; background: transparent; }
-      20% { opacity: 1; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent); }
-      100% { opacity: 0; background: transparent; }
-    }
-
-    .speed-line {
-      position: absolute;
-      height: 3px;
-      background: linear-gradient(90deg, transparent, #fff, transparent);
-      border-radius: 50%;
-      animation: lineMove 0.5s linear;
-    }
-
-    @keyframes lineMove {
-      0% { transform: translateX(-100%); opacity: 1; }
-      100% { transform: translateX(200vw); opacity: 0; }
-    }
-
-    /* 星星特效 */
-    .stars-container {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: 150;
-    }
-
-    .star {
-      position: absolute;
-      font-size: 1.5rem;
-      animation: starBurst 1s ease-out forwards;
-      opacity: 0;
-    }
-
-    @keyframes starBurst {
-      0% { transform: scale(0) rotate(0deg); opacity: 1; }
-      50% { opacity: 1; }
-      100% { transform: scale(1.5) rotate(180deg) translateY(-100px); opacity: 0; }
-    }
-
-    /* 页面切换动画 */
-    .page-transition {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(135deg, var(--primary), var(--secondary));
-      z-index: 300;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.3s;
-    }
-
-    .page-transition.active {
-      opacity: 1;
-      pointer-events: all;
-    }
-
-    .page-transition-content {
-      text-align: center;
-      animation: transitionBounce 0.5s ease;
-    }
-
-    @keyframes transitionBounce {
-      0% { transform: scale(0); }
-      50% { transform: scale(1.2); }
-      100% { transform: scale(1); }
-    }
-
-    .page-transition-emoji {
-      font-size: 5rem;
-      animation: emojiSpin 0.5s ease;
-    }
-
-    @keyframes emojiSpin {
-      0% { transform: rotate(0deg) scale(0); }
-      100% { transform: rotate(360deg) scale(1); }
-    }
-
-    /* 页脚 */
+    /* ========== 页脚 ========== */
     footer {
       text-align: center;
-      padding: 20px 40px 100px;
+      padding: 40px 20px;
       color: rgba(255, 255, 255, 0.4);
       font-size: 0.9rem;
-      position: relative;
-      z-index: 1;
     }
 
     footer a {
-      color: var(--accent);
+      color: #f093fb;
       text-decoration: none;
     }
 
-    /* 响应式 */
+    /* ========== 响应式 ========== */
     @media (max-width: 768px) {
-      .hero h1 { font-size: 2.5rem; }
+      .hero h1 { font-size: 2.2rem; }
       .nav-links { display: none; }
-      .container { padding: 100px 20px 120px; }
+      .container { padding: 90px 20px 40px; }
       .games-grid { grid-template-columns: 1fr; }
       .stats { flex-direction: column; gap: 20px; }
-      .snowfield { height: 250px; }
-      .hedgehog-male, .hedgehog-female { transform: scale(0.8); }
+      .snow-container { height: 180px; }
+      .hedgehog-container { transform: scale(0.8); }
       .hedgehog-male { left: 30px; }
       .hedgehog-female { right: 30px; }
     }
   </style>
 </head>
 <body>
-  <!-- 背景粒子 -->
-  <div class="particles" id="particles"></div>
-
-  <!-- 冲刺特效层 -->
-  <div class="speed-lines" id="speedLines"></div>
-
-  <!-- 星星特效层 -->
-  <div class="stars-container" id="starsContainer"></div>
-
-  <!-- 页面切换动画 -->
-  <div class="page-transition" id="pageTransition">
-    <div class="page-transition-content">
-      <div class="page-transition-emoji" id="transitionEmoji">🦔</div>
-      <div style="font-size: 1.5rem; margin-top: 10px;" id="transitionText">正在进入游戏...</div>
-    </div>
-  </div>
-
   <!-- 导航栏 -->
   <nav>
     <div class="nav-content">
       <div class="logo">
-        <svg width="40" height="40" viewBox="0 0 100 100">
-          <!-- 刺猬身体 -->
-          <ellipse cx="50" cy="65" rx="35" ry="25" fill="#D2691E"/>
+        <svg width="36" height="36" viewBox="0 0 100 100">
+          <!-- 身体 -->
+          <ellipse cx="50" cy="70" rx="35" ry="25" fill="#D2691E"/>
           <!-- 刺 -->
-          <polygon points="20,50 25,25 35,50" fill="#8B4513"/>
-          <polygon points="35,45 42,15 50,45" fill="#8B4513"/>
-          <polygon points="50,45 55,12 62,45" fill="#8B4513"/>
-          <polygon points="62,45 68,18 75,50" fill="#8B4513"/>
-          <polygon points="72,50 78,30 85,55" fill="#8B4513"/>
-          <!-- 脸 -->
-          <circle cx="35" cy="60" r="18" fill="#D2691E"/>
-          <!-- 脸蛋 -->
-          <circle cx="28" cy="65" r="5" fill="#FFB6C1" opacity="0.6"/>
-          <circle cx="42" cy="65" r="5" fill="#FFB6C1" opacity="0.6"/>
+          <polygon points="18,55 25,25 38,55" fill="#8B4513"/>
+          <polygon points="35,50 44,15 55,50" fill="#8B4513"/>
+          <polygon points="52,50 60,12 68,50" fill="#8B4513"/>
+          <polygon points="65,52 75,20 85,58" fill="#8B4513"/>
+          <polygon points="78,58 88,35 95,65" fill="#8B4513"/>
+          <!-- 脸部 -->
+          <circle cx="35" cy="65" r="20" fill="#DEB887"/>
+          <!-- 腮红 -->
+          <circle cx="26" cy="70" r="5" fill="#FFB6C1" opacity="0.5"/>
+          <circle cx="44" cy="70" r="5" fill="#FFB6C1" opacity="0.5"/>
           <!-- 眼睛 -->
-          <circle cx="30" cy="58" r="4" fill="#333"/>
-          <circle cx="31" cy="57" r="1.5" fill="#fff"/>
-          <circle cx="40" cy="58" r="4" fill="#333"/>
-          <circle cx="41" cy="57" r="1.5" fill="#fff"/>
+          <circle cx="30" cy="62" r="4" fill="#333"/>
+          <circle cx="31" cy="61" r="1.5" fill="#fff"/>
+          <circle cx="40" cy="62" r="4" fill="#333"/>
+          <circle cx="41" cy="61" r="1.5" fill="#fff"/>
           <!-- 鼻子 -->
-          <ellipse cx="35" cy="64" rx="3" ry="2" fill="#333"/>
-          <!-- 嘴巴 -->
-          <path d="M 32 68 Q 35 71 38 68" stroke="#333" stroke-width="1.5" fill="none"/>
-          <!-- 耳朵 -->
-          <ellipse cx="20" cy="52" rx="6" ry="8" fill="#D2691E"/>
-          <ellipse cx="20" cy="52" rx="3" ry="5" fill="#FFB6C1" opacity="0.5"/>
-          <ellipse cx="50" cy="52" rx="6" ry="8" fill="#D2691E"/>
-          <ellipse cx="50" cy="52" rx="3" ry="5" fill="#FFB6C1" opacity="0.5"/>
+          <ellipse cx="35" cy="68" rx="3" ry="2" fill="#333"/>
+          <!-- 微笑 -->
+          <path d="M 30 73 Q 35 77 40 73" stroke="#333" stroke-width="1.5" fill="none"/>
         </svg>
         <span>小小刺猬</span>
       </div>
       <ul class="nav-links">
         <li><a href="#home">首页</a></li>
-        <li><a href="#games">游戏列表</a></li>
-        <li><a href="#about">关于我们</a></li>
+        <li><a href="#games">游戏</a></li>
+        <li><a href="#about">关于</a></li>
       </ul>
     </div>
   </nav>
@@ -710,127 +558,117 @@
       <p>可爱小刺猬带你玩转趣味小游戏！快来一起和刺猬朋友们玩耍吧~</p>
 
       <!-- 雪战场地 -->
-      <div class="snowfield">
+      <div class="snow-container">
         <!-- 飘落的雪花 -->
-        <div class="snowflake" style="left: 10%; animation-duration: 4s; font-size: 0.8rem;">❄</div>
-        <div class="snowflake" style="left: 25%; animation-duration: 5s; animation-delay: 1s;">❄</div>
-        <div class="snowflake" style="left: 40%; animation-duration: 4.5s; animation-delay: 2s;">❄</div>
-        <div class="snowflake" style="left: 55%; animation-duration: 5.5s; animation-delay: 0.5s;">❄</div>
-        <div class="snowflake" style="left: 70%; animation-duration: 4s; animation-delay: 1.5s;">❄</div>
-        <div class="snowflake" style="left: 85%; animation-duration: 5s; animation-delay: 2.5s;">❄</div>
-        <div class="snowflake" style="left: 15%; animation-duration: 6s; animation-delay: 3s; font-size: 1.2rem;">❅</div>
-        <div class="snowflake" style="left: 45%; animation-duration: 5s; animation-delay: 0.8s; font-size: 1rem;">❅</div>
-        <div class="snowflake" style="left: 75%; animation-duration: 5.5s; animation-delay: 1.8s; font-size: 0.9rem;">❅</div>
+        <div class="snowflake" style="left: 8%; animation-duration: 4s; font-size: 0.7rem;">❄</div>
+        <div class="snowflake" style="left: 20%; animation-duration: 5s; animation-delay: 1s;">❅</div>
+        <div class="snowflake" style="left: 35%; animation-duration: 4.5s; animation-delay: 0.5s;">❄</div>
+        <div class="snowflake" style="left: 50%; animation-duration: 5.5s; animation-delay: 2s; font-size: 0.9rem;">❅</div>
+        <div class="snowflake" style="left: 65%; animation-duration: 4s; animation-delay: 1.5s;">❄</div>
+        <div class="snowflake" style="left: 78%; animation-duration: 5s; animation-delay: 0.8s;">❅</div>
+        <div class="snowflake" style="left: 90%; animation-duration: 4.5s; animation-delay: 2.5s;">❄</div>
 
-        <!-- 雪堆 -->
-        <div class="snow-mound left"></div>
-        <div class="snow-mound right"></div>
+        <!-- 小雪堆 -->
+        <div class="snow-mound snow-mound-1"></div>
+        <div class="snow-mound snow-mound-2"></div>
+        <div class="snow-mound snow-mound-3"></div>
 
         <!-- 雪地 -->
         <div class="snow-ground"></div>
 
-        <!-- 男生刺猬 - 蓝色围巾 -->
-        <div class="hedgehog-male">
-          <svg viewBox="0 0 100 120" width="100" height="120">
+        <!-- 男生刺猬 -->
+        <div class="hedgehog-container hedgehog-male">
+          <svg viewBox="0 0 90 110" width="90" height="110">
             <!-- 身体 -->
-            <ellipse cx="50" cy="85" rx="38" ry="28" fill="#D2691E"/>
-            <!-- 刺背 -->
-            <polygon points="15,70 22,35 35,65" fill="#8B4513"/>
-            <polygon points="30,60 40,20 52,58" fill="#8B4513"/>
-            <polygon points="50,58 58,15 66,58" fill="#8B4513"/>
-            <polygon points="65,60 72,22 82,68" fill="#8B4513"/>
-            <polygon points="78,68 85,40 92,75" fill="#8B4513"/>
-            <!-- 脸部 -->
-            <circle cx="30" cy="78" r="22" fill="#DEB887"/>
+            <ellipse cx="45" cy="80" rx="32" ry="24" fill="#D2691E"/>
+            <!-- 刺 -->
+            <polygon points="15,65 22,30 35,60" fill="#8B4513"/>
+            <polygon points="30,58 40,18 52,56" fill="#8B4513"/>
+            <polygon points="48,56 58,15 68,58" fill="#8B4513"/>
+            <polygon points="62,60 72,25 82,68" fill="#8B4513"/>
+            <polygon points="75,68 85,42 92,75" fill="#8B4513"/>
             <!-- 围巾 -->
-            <path d="M 8 85 Q 15 95 30 98 Q 45 95 52 85" fill="#4169E1" stroke="#4169E1" stroke-width="3"/>
-            <rect x="8" y="85" width="8" height="20" fill="#4169E1" rx="2"/>
-            <!-- 腮红 -->
-            <circle cx="20" cy="82" r="6" fill="#FFB6C1" opacity="0.5"/>
-            <circle cx="40" cy="82" r="6" fill="#FFB6C1" opacity="0.5"/>
-            <!-- 眼睛 -->
-            <circle cx="24" cy="74" r="5" fill="#333"/>
-            <circle cx="25.5" cy="72.5" r="2" fill="#fff"/>
-            <circle cx="36" cy="74" r="5" fill="#333"/>
-            <circle cx="37.5" cy="72.5" r="2" fill="#fff"/>
-            <!-- 眼睫毛 -->
-            <path d="M 19 70 Q 24 67 29 70" stroke="#333" stroke-width="1.5" fill="none"/>
-            <path d="M 31 70 Q 36 67 41 70" stroke="#333" stroke-width="1.5" fill="none"/>
-            <!-- 鼻子 -->
-            <ellipse cx="30" cy="82" rx="4" ry="3" fill="#333"/>
-            <!-- 微笑 -->
-            <path d="M 25 88 Q 30 93 35 88" stroke="#333" stroke-width="2" fill="none"/>
-            <!-- 耳朵 -->
-            <ellipse cx="12" cy="65" rx="7" ry="10" fill="#DEB887"/>
-            <ellipse cx="12" cy="65" rx="4" ry="6" fill="#FFB6C1" opacity="0.4"/>
-            <ellipse cx="48" cy="65" rx="7" ry="10" fill="#DEB887"/>
-            <ellipse cx="48" cy="65" rx="4" ry="6" fill="#FFB6C1" opacity="0.4"/>
-            <!-- 手 -->
-            <ellipse cx="8" cy="95" rx="8" ry="6" fill="#DEB887"/>
-            <ellipse cx="52" cy="100" rx="8" ry="6" fill="#DEB887"/>
-            <!-- 脚 -->
-            <ellipse cx="35" cy="112" rx="10" ry="5" fill="#DEB887"/>
-            <ellipse cx="55" cy="112" rx="10" ry="5" fill="#DEB887"/>
-          </svg>
-        </div>
-
-        <!-- 女生刺猬 - 粉色蝴蝶结 -->
-        <div class="hedgehog-female">
-          <svg viewBox="0 0 100 120" width="100" height="120">
-            <!-- 身体 -->
-            <ellipse cx="50" cy="85" rx="38" ry="28" fill="#D2691E"/>
-            <!-- 刺背 -->
-            <polygon points="15,70 22,35 35,65" fill="#8B4513"/>
-            <polygon points="30,60 40,20 52,58" fill="#8B4513"/>
-            <polygon points="50,58 58,15 66,58" fill="#8B4513"/>
-            <polygon points="65,60 72,22 82,68" fill="#8B4513"/>
-            <polygon points="78,68 85,40 92,75" fill="#8B4513"/>
+            <path d="M 12 78 Q 22 90 45 94 Q 60 90 68 78" fill="#4169E1" stroke="#4169E1" stroke-width="2"/>
+            <rect x="10" y="78" width="7" height="18" fill="#4169E1" rx="2"/>
             <!-- 脸部 -->
-            <circle cx="30" cy="78" r="22" fill="#DEB887"/>
-            <!-- 蝴蝶结 -->
-            <circle cx="50" cy="42" r="4" fill="#FF69B4"/>
-            <ellipse cx="42" cy="42" rx="8" ry="5" fill="#FF69B4"/>
-            <ellipse cx="58" cy="42" rx="8" ry="5" fill="#FF69B4"/>
-            <ellipse cx="50" cy="46" rx="4" ry="2" fill="#FF1493"/>
+            <circle cx="28" cy="72" r="18" fill="#DEB887"/>
             <!-- 腮红 -->
-            <circle cx="18" cy="80" r="7" fill="#FFB6C1" opacity="0.6"/>
-            <circle cx="42" cy="80" r="7" fill="#FFB6C1" opacity="0.6"/>
+            <circle cx="20" cy="76" r="5" fill="#FFB6C1" opacity="0.5"/>
+            <circle cx="36" cy="76" r="5" fill="#FFB6C1" opacity="0.5"/>
             <!-- 眼睛 -->
-            <circle cx="22" cy="72" r="6" fill="#333"/>
-            <circle cx="23.5" cy="70.5" r="2.5" fill="#fff"/>
-            <circle cx="38" cy="72" r="6" fill="#333"/>
-            <circle cx="39.5" cy="70.5" r="2.5" fill="#fff"/>
+            <circle cx="24" cy="68" r="4" fill="#333"/>
+            <circle cx="25" cy="67" r="1.5" fill="#fff"/>
+            <circle cx="32" cy="68" r="4" fill="#333"/>
+            <circle cx="33" cy="67" r="1.5" fill="#fff"/>
             <!-- 眼睫毛 -->
-            <path d="M 16 68 Q 22 64 28 68" stroke="#333" stroke-width="2" fill="none"/>
-            <path d="M 32 68 Q 38 64 44 68" stroke="#333" stroke-width="2" fill="none"/>
-            <!-- 粉红眼影 -->
-            <ellipse cx="22" cy="76" rx="8" ry="3" fill="#FFB6C1" opacity="0.3"/>
-            <ellipse cx="38" cy="76" rx="8" ry="3" fill="#FFB6C1" opacity="0.3"/>
+            <path d="M 20 65 Q 24 62 28 65" stroke="#333" stroke-width="1" fill="none"/>
+            <path d="M 28 65 Q 32 62 36 65" stroke="#333" stroke-width="1" fill="none"/>
             <!-- 鼻子 -->
-            <ellipse cx="30" cy="80" rx="3" ry="2.5" fill="#FF69B4"/>
+            <ellipse cx="28" cy="74" rx="3" ry="2" fill="#333"/>
             <!-- 微笑 -->
-            <path d="M 24 86 Q 30 92 36 86" stroke="#333" stroke-width="2" fill="none"/>
-            <!-- 耳朵 -->
-            <ellipse cx="10" cy="63" rx="8" ry="11" fill="#DEB887"/>
-            <ellipse cx="10" cy="63" rx="5" ry="7" fill="#FFB6C1" opacity="0.4"/>
-            <ellipse cx="50" cy="63" rx="8" ry="11" fill="#DEB887"/>
-            <ellipse cx="50" cy="63" rx="5" ry="7" fill="#FFB6C1" opacity="0.4"/>
-            <!-- 手 -->
-            <ellipse cx="6" cy="93" rx="9" ry="7" fill="#DEB887"/>
-            <ellipse cx="54" cy="98" rx="9" ry="7" fill="#DEB887"/>
+            <path d="M 24 79 Q 28 83 32 79" stroke="#333" stroke-width="1.5" fill="none"/>
+            <!-- 手臂 -->
+            <ellipse class="snowball-arm" cx="65" cy="85" rx="8" ry="6" fill="#DEB887"/>
             <!-- 脚 -->
-            <ellipse cx="33" cy="112" rx="10" ry="5" fill="#DEB887"/>
-            <ellipse cx="53" cy="112" rx="10" ry="5" fill="#DEB887"/>
+            <ellipse cx="32" cy="102" rx="9" ry="5" fill="#DEB887"/>
+            <ellipse cx="52" cy="102" rx="9" ry="5" fill="#DEB887"/>
           </svg>
         </div>
 
-        <!-- 飞行的雪球 -->
-        <div class="snowball male-throw"></div>
-        <div class="snowball female-throw"></div>
+        <!-- 飞行雪球 -->
+        <div class="snowball-projectile snowball-1"></div>
 
         <!-- 击中特效 -->
-        <div class="hit-effect male-hit">💥😵</div>
-        <div class="hit-effect female-hit">💥😵</div>
+        <div class="hit-effect hit-1">💥 😵</div>
+
+        <!-- 女生刺猬 -->
+        <div class="hedgehog-container hedgehog-female">
+          <svg viewBox="0 0 90 110" width="90" height="110">
+            <!-- 身体 -->
+            <ellipse cx="45" cy="80" rx="32" ry="24" fill="#D2691E"/>
+            <!-- 刺 -->
+            <polygon points="15,65 22,30 35,60" fill="#8B4513"/>
+            <polygon points="30,58 40,18 52,56" fill="#8B4513"/>
+            <polygon points="48,56 58,15 68,58" fill="#8B4513"/>
+            <polygon points="62,60 72,25 82,68" fill="#8B4513"/>
+            <polygon points="75,68 85,42 92,75" fill="#8B4513"/>
+            <!-- 蝴蝶结 -->
+            <circle cx="45" cy="38" r="4" fill="#FF69B4"/>
+            <ellipse cx="37" cy="38" rx="7" ry="4" fill="#FF69B4"/>
+            <ellipse cx="53" cy="38" rx="7" ry="4" fill="#FF69B4"/>
+            <!-- 脸部 -->
+            <circle cx="28" cy="72" r="18" fill="#DEB887"/>
+            <!-- 腮红 -->
+            <circle cx="18" cy="74" r="6" fill="#FFB6C1" opacity="0.6"/>
+            <circle cx="38" cy="74" r="6" fill="#FFB6C1" opacity="0.6"/>
+            <!-- 眼睛 -->
+            <circle cx="22" cy="66" r="5" fill="#333"/>
+            <circle cx="23.5" cy="64.5" r="2" fill="#fff"/>
+            <circle cx="34" cy="66" r="5" fill="#333"/>
+            <circle cx="35.5" cy="64.5" r="2" fill="#fff"/>
+            <!-- 眼睫毛 -->
+            <path d="M 17 62 Q 22 58 27 62" stroke="#333" stroke-width="1.5" fill="none"/>
+            <path d="M 29 62 Q 34 58 39 62" stroke="#333" stroke-width="1.5" fill="none"/>
+            <!-- 粉色眼影 -->
+            <ellipse cx="22" cy="70" rx="7" ry="2.5" fill="#FFB6C1" opacity="0.3"/>
+            <ellipse cx="34" cy="70" rx="7" ry="2.5" fill="#FFB6C1" opacity="0.3"/>
+            <!-- 鼻子 -->
+            <ellipse cx="28" cy="72" rx="2.5" ry="2" fill="#FF69B4"/>
+            <!-- 微笑 -->
+            <path d="M 23 78 Q 28 83 33 78" stroke="#333" stroke-width="1.5" fill="none"/>
+            <!-- 手臂 -->
+            <ellipse class="snowball-arm" cx="25" cy="85" rx="8" ry="6" fill="#DEB887"/>
+            <!-- 脚 -->
+            <ellipse cx="30" cy="102" rx="9" ry="5" fill="#DEB887"/>
+            <ellipse cx="50" cy="102" rx="9" ry="5" fill="#DEB887"/>
+          </svg>
+        </div>
+
+        <!-- 飞行雪球 -->
+        <div class="snowball-projectile snowball-2"></div>
+
+        <!-- 击中特效 -->
+        <div class="hit-effect hit-2">💥 😵</div>
       </div>
 
       <div class="stats">
@@ -850,25 +688,26 @@
     </section>
 
     <!-- 游戏列表 -->
-    <section class="games-grid" id="games">
+    <h2 class="section-title" id="games"><span>🎮 游戏列表</span></h2>
+    <section class="games-grid">
       <!-- 猜数字 -->
-      <div class="game-card" onclick="startGame('guess-number-game/web-game.html', '🎯', '猜数字')">
+      <div class="game-card" onclick="HedgehogLib.game.start('guess-number-game/web-game.html', '猜数字', '🎯', event)">
         <div class="game-icon">🎯</div>
         <h3 class="game-title">猜数字</h3>
-        <p class="game-desc">小刺猬想了一个 1-100 的数字，看看你能否用最少的次数猜中它！</p>
+        <p class="game-desc">小刺猬想了一个数字，用按钮选择范围来猜吧！</p>
         <div class="game-tags">
           <span class="tag">益智</span>
-          <span class="tag">逻辑推理</span>
+          <span class="tag">逻辑</span>
           <span class="tag">🦔推荐</span>
         </div>
         <button class="play-btn">▶</button>
       </div>
 
       <!-- 石头剪刀布 -->
-      <div class="game-card" onclick="startGame('rock-paper-scissors/index.html', '✊', '石头剪刀布')">
+      <div class="game-card" onclick="HedgehogLib.game.start('rock-paper-scissors/index.html', '石头剪刀布', '✊', event)">
         <div class="game-icon">✊</div>
         <h3 class="game-title">石头剪刀布</h3>
-        <p class="game-desc">和小刺猬一起玩猜拳！看看谁才是真正的猜拳之王！</p>
+        <p class="game-desc">和小刺猬一起玩猜拳！看看谁是猜拳之王！</p>
         <div class="game-tags">
           <span class="tag">经典</span>
           <span class="tag">休闲</span>
@@ -878,23 +717,23 @@
       </div>
 
       <!-- 打字速度测试 -->
-      <div class="game-card" onclick="startGame('typing-test/index.html', '⌨️', '打字速度测试')">
+      <div class="game-card" onclick="HedgehogLib.game.start('typing-test/index.html', '打字速度测试', '⌨️', event)">
         <div class="game-icon">⌨️</div>
         <h3 class="game-title">打字速度测试</h3>
-        <p class="game-desc">跟着小刺猬一起练习打字！挑战你的打字速度极限！</p>
+        <p class="game-desc">跟着小刺猬练习打字！用英文测试更准确！</p>
         <div class="game-tags">
           <span class="tag">技巧</span>
           <span class="tag">速度</span>
-          <span class="tag">挑战</span>
+          <span class="tag">英文</span>
         </div>
         <button class="play-btn">▶</button>
       </div>
 
       <!-- 记忆翻牌 -->
-      <div class="game-card" onclick="startGame('memory-game/index.html', '🧠', '记忆翻牌')">
+      <div class="game-card" onclick="HedgehogLib.game.start('memory-game/index.html', '记忆翻牌', '🧠', event)">
         <div class="game-icon">🧠</div>
         <h3 class="game-title">记忆翻牌</h3>
-        <p class="game-desc">小刺猬的记性超好！来比比看谁记得更多图案！</p>
+        <p class="game-desc">小刺猬的记性超好！来比比看谁记得更多！</p>
         <div class="game-tags">
           <span class="tag">记忆</span>
           <span class="tag">配对</span>
@@ -904,10 +743,10 @@
       </div>
 
       <!-- 24点计算 -->
-      <div class="game-card" onclick="startGame('24-points/index.html', '🧮', '24点计算')">
+      <div class="game-card" onclick="HedgehogLib.game.start('24-points/index.html', '24点计算', '🧮', event)">
         <div class="game-icon">🧮</div>
         <h3 class="game-title">24点计算</h3>
-        <p class="game-desc">小刺猬的数学可厉害了！用4个数字算出24来吧！</p>
+        <p class="game-desc">小刺猬的数学超厉害！用4个数字算出24！</p>
         <div class="game-tags">
           <span class="tag">数学</span>
           <span class="tag">运算</span>
@@ -917,10 +756,10 @@
       </div>
 
       <!-- 幸运色子 -->
-      <div class="game-card" onclick="startGame('dice-game/index.html', '🎲', '幸运色子')">
+      <div class="game-card" onclick="HedgehogLib.game.start('dice-game/index.html', '幸运色子', '🎲', event)">
         <div class="game-icon">🎲</div>
         <h3 class="game-title">幸运色子</h3>
-        <p class="game-desc">投掷色子，看看小刺猬今天的运气如何！连续掷出高点数吧！</p>
+        <p class="game-desc">投掷色子，看看今天的运气如何！</p>
         <div class="game-tags">
           <span class="tag">运气</span>
           <span class="tag">概率</span>
@@ -937,85 +776,7 @@
     <p style="margin-top: 10px;">© 2026 小小刺猬 - 开源免费 🦔</p>
   </footer>
 
-  <script>
-    // 创建背景粒子
-    const particlesContainer = document.getElementById('particles');
-    for (let i = 0; i < 30; i++) {
-      const particle = document.createElement('div');
-      particle.className = 'particle';
-      particle.style.left = Math.random() * 100 + '%';
-      particle.style.animationDelay = Math.random() * 15 + 's';
-      particle.style.animationDuration = (15 + Math.random() * 10) + 's';
-      particlesContainer.appendChild(particle);
-    }
-
-    // 冲刺特效
-    function createSpeedLines() {
-      const container = document.getElementById('speedLines');
-      container.innerHTML = '';
-      
-      for (let i = 0; i < 20; i++) {
-        const line = document.createElement('div');
-        line.className = 'speed-line';
-        line.style.top = Math.random() * 100 + '%';
-        line.style.width = (100 + Math.random() * 200) + 'px';
-        line.style.animationDelay = Math.random() * 0.3 + 's';
-        container.appendChild(line);
-      }
-      
-      container.classList.add('active');
-      setTimeout(() => container.classList.remove('active'), 500);
-    }
-
-    // 星星爆发动画
-    function createStars(x, y) {
-      const container = document.getElementById('starsContainer');
-      const emojis = ['⭐', '✨', '💫', '🌟', '✴️', '❇️'];
-      
-      for (let i = 0; i < 12; i++) {
-        const star = document.createElement('div');
-        star.className = 'star';
-        star.textContent = emojis[Math.floor(Math.random() * emojis.length)];
-        star.style.left = x + 'px';
-        star.style.top = y + 'px';
-        star.style.animationDelay = Math.random() * 0.3 + 's';
-        container.appendChild(star);
-        
-        setTimeout(() => star.remove(), 1300);
-      }
-    }
-
-    // 开始游戏（带特效）
-    function startGame(url, emoji, name) {
-      const card = event.currentTarget;
-      const rect = card.getBoundingClientRect();
-      const x = rect.left + rect.width / 2;
-      const y = rect.top + rect.height / 2;
-
-      // 卡片点击动画
-      card.classList.add('clicked');
-      setTimeout(() => card.classList.remove('clicked'), 500);
-
-      // 创建星星
-      createStars(x, y);
-
-      // 冲刺效果
-      createSpeedLines();
-
-      // 显示过渡动画
-      const transition = document.getElementById('pageTransition');
-      const transitionEmoji = document.getElementById('transitionEmoji');
-      const transitionText = document.getElementById('transitionText');
-      
-      transitionEmoji.textContent = emoji;
-      transitionText.textContent = `🦔 小刺猬带你去玩 ${name}...`;
-      transition.classList.add('active');
-
-      // 延迟跳转
-      setTimeout(() => {
-        window.location.href = url;
-      }, 800);
-    }
-  </script>
+  <!-- 引入共享库 -->
+  <script src="shared/lib.js"></script>
 </body>
 </html>
